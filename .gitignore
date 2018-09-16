@@ -68,3 +68,6 @@ jspm_packages/
 
 # Serverless directories
 .serverless
+
+# dist of project
+dist/
