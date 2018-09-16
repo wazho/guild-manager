@@ -1,0 +1,32 @@
+{
+  "name": "maplerstory-member-manager",
+  "version": "0.0.1",
+  "description": "The member management system in MapleStory.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ze-Hao Wang (Salmon)",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-passport": "^4.1.1",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.9.0",
+    "passport": "^0.4.0",
+    "passport-line": "0.0.4"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.46",
+    "@types/koa-bodyparser": "^5.0.1",
+    "@types/koa-passport": "^4.0.2",
+    "@types/koa-router": "^7.0.31",
+    "@types/koa-session": "^5.7.4",
+    "@types/node": "^10.9.4",
+    "@types/passport": "^0.4.6",
+    "typescript": "^3.0.3"
+  }
+}
