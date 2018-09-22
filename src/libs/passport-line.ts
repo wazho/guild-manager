@@ -1,21 +1,16 @@
 import * as passport from 'koa-passport';
 import { Strategy as LineStrategy } from 'passport-line';
+import { lineChannel } from '../config';
 
-passport.serializeUser((user, done) => {
-    done(null, user);
+passport.serializeUser((user: any, done) => {
+    done(null, user.id);
 });
 
 passport.deserializeUser((obj, done) => {
     done(null, obj);
 });
 
-passport.use(new LineStrategy({
-    channelID: '1608000703',
-    channelSecret: '2eaa8b15b3a76849bbe01aaab34528fc',
-    callbackURL: 'http://127.0.0.1:3000/auth/line/callback'
-}, (accessToken: any, refreshToken: any, profile: any, done: any) => {
-    const { id, displayName, pictureUrl } = profile;
-    console.log(id, displayName, pictureUrl);
+passport.use(new LineStrategy(lineChannel, (accessToken: any, refreshToken: any, profile: any, done: any) => {
     process.nextTick(() => done(null, profile));
 }));
 
