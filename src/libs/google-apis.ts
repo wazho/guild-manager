@@ -111,11 +111,19 @@ async function readUsers() {
     }
 }
 
-async function insertUser(profile: IProfile, auth: any) {
+async function insertUser(profile: IProfile, callback: any, auth: any) {
     const sheets = google.sheets({
         version: 'v4',
         auth,
     });
+
+    // Avoid duplicate user be added.
+    const users = await readUsers();
+    const found = users.find((user) => user.lineID === profile.lineID);
+
+    if (found) {
+        return callback('ERR_USER_ALREADY_EXIST');
+    }
 
     const appendValues = promisify(sheets.spreadsheets.values.append);
 
@@ -147,11 +155,13 @@ async function insertUser(profile: IProfile, auth: any) {
             },
         });
 
-        return;
+        return callback(null);
     } catch (err) {
-        return;
+        return callback('ERR_APPEND_VALUES');
     }
 }
 
-export const addUser = (profile: IProfile) => authorize(credentials, insertUser.bind(null, profile));
+export const addUser = (profile: IProfile, callback: any) =>
+    authorize(credentials, insertUser.bind(null, profile, callback));
+
 export const getUsers = readUsers;

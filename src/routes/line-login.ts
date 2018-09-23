@@ -111,6 +111,8 @@ router.post('/register', async (ctx, next) => {
                 pictureURL,
                 avatarURL: character && character.avatarURL,
                 job: character && character.job,
+            }, (error: any) => {
+                console.warn(error);
             });
 
             return ctx.redirect('/users');
