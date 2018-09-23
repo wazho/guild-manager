@@ -1,18 +1,35 @@
-doctype html
-html(lang='en')
-    head
-        title
-            | 新楓之谷 - 淫小築 - 邀請碼生成
+extends base.pug
+block title
+    | 新楓之谷 - 淫小築 - 邀請碼生成
 
-        style(type='text/css').
-            button {
-                color: blue;
-            }
+block content
+    div.uk-section.uk-section-muted
+        div.uk-container.uk-container-xsmall
+            form(action='/generate-invite-code' method='post')
+                h2.uk-heading-line.uk-text-center
+                    | 邀請碼生成
 
-    body
-        h2
-            | 請輸入管理者的遊戲名稱與被邀請者遊戲名稱
-        form(action='/admin' method='post')
-            input#manager(name='manager' type='text')
-            input#player(name='player' type='text')
-            input(type='submit')
+                div.uk-card
+                    | 相同角色名稱生成的邀請碼，只能夠被使用一次
+
+                div.uk-margin
+                    label.uk-form-label(for='manager')
+                        | 管理者
+                    div.uk-form-controls
+                        div.uk-inline
+                            span.uk-form-icon(uk-icon='icon: user')
+                            input#manager.uk-input(name='manager' type='text')
+
+                div.uk-margin
+                    label.uk-form-label(for='player')
+                        | 玩家角色名稱
+                    div.uk-form-controls
+                        div.uk-inline
+                            span.uk-form-icon(uk-icon='icon: user')
+                            input#player.uk-input(name='player' type='text')
+
+                input.uk-button.uk-button-primary.uk-align-right(type='submit', value='送出')
+
+            a(href='/')
+                button.uk-button.uk-align-left
+                    | 回首頁

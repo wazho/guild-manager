@@ -1,0 +1,65 @@
+extends base.pug
+block title
+    | 新楓之谷 - 淫小築 - 邀請碼生成
+
+block content
+    div.uk-section.uk-section-muted
+        div.uk-container.uk-container-xsmall
+            h2.uk-heading-line.uk-text-center
+                | 邀請碼生成
+
+            div.uk-margin
+                label.uk-form-label
+                    | 管理者
+                div.uk-form-controls
+                    div.uk-inline
+                        span.uk-form-icon(uk-icon='icon: user')
+                        input.uk-input(type='text', value= manager, disabled)
+
+            div.uk-margin
+                label.uk-form-label
+                    | 玩家角色名稱
+                div.uk-form-controls
+                    div.uk-inline
+                        span.uk-form-icon(uk-icon='icon: user')
+                        input.uk-input(type='text', value= player, disabled)
+
+            div.uk-margin
+                label.uk-form-label
+                    | 邀請信函
+                div.uk-form-controls
+                    textarea#invite-message.uk-textarea(rows='6' readonly)
+                        | 哈囉，#{player}
+                        |
+                        | 我是淫小築的幹部 #{manager}，歡迎你的加入！
+                        |
+                        | 接下來，請到這份網址 #{`http://example.com`} 進行會籍登錄。
+                        |
+                        | 過程中你會需要使用到以下的邀請碼，這份邀請碼已事先綁定了你的遊戲角色，並且只能夠使用一次，亦無法將這份邀請碼轉讓給他人使用哦！
+
+            div.uk-margin
+                button.uk-button.uk-button-primary.uk-width-1-1(onclick='copyToClipboard("invite-message")')
+                    | 複製邀請信函
+
+            hr.uk-divider-icon
+
+            div.uk-margin
+                label.uk-form-label
+                    | 邀請碼
+                div.uk-form-controls
+                    textarea#invite-code.uk-textarea(rows='3' readonly)
+                        | #{inviteCode}
+
+            div.uk-margin
+                button.uk-button.uk-button-primary.uk-width-1-1(onclick='copyToClipboard("invite-code")')
+                    | 複製邀請碼
+
+            a(href='/admin')
+                button.uk-button.uk-align-left
+                    | 回上頁
+
+    script.
+        function copyToClipboard(id) {
+            document.getElementById(id).select();
+            document.execCommand('copy');
+        }

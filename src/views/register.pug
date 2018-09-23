@@ -1,20 +1,27 @@
-doctype html
-html(lang='en')
-    head
-        title
-            | 新楓之谷 - 淫小築 - 入會註冊
+extends base.pug
+block title
+    | 新楓之谷 - 淫小築 - 入會註冊
 
-        style(type='text/css').
-            button {
-                color: blue;
-            }
+block content
+    div.uk-section.uk-section-muted
+        div.uk-container.uk-container-xsmall
+            form(action='/register', method='post')
+                div.uk-margin
+                    label.uk-form-label(for='inviteCode')
+                        | 邀請代碼
+                    div.uk-form-controls
+                        input#inviteCode.uk-input(name='inviteCode', type='text')
 
-    body
-        h2
-            | 請輸入管理群提供的邀請代碼
-        form(action='/register' method='post')
-            input#inviteCode(name='inviteCode' type='text')
-            input#displayName(name='displayName' type='text' value= displayName)
-            input#lineID(name='lineID' type='text' value= lineID)
-            input#pictureURL(name='pictureURL' type='text' value= pictureURL)
-            input(type='submit')
+                div.uk-margin
+                    label.uk-form-label(for='displayName')
+                        | LINE
+                    div.uk-form-controls
+                        div.uk-inline
+                            span.uk-form-icon(uk-icon='icon: user')
+                            input#displayName.uk-input(name='displayName', type='text', value= displayName, readonly)
+
+                input#lineID(name='lineID', type='hidden', value= lineID)
+
+                input#pictureURL(name='pictureURL', type='hidden', value= pictureURL)
+
+                input.uk-button.uk-button-primary.uk-align-right(type='submit', value='送出')

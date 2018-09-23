@@ -1,18 +1,17 @@
-doctype html
-html(lang='en')
-    head
-        title
-            | 新楓之谷 - 淫小築 - 入會註冊
+extends base.pug
 
-        style(type='text/css').
-            button {
-                color: blue;
-            }
-
-    body
-        a(href='/login')
-            button
+block content
+    div.uk-section.uk-section-muted
+        div.uk-container.uk-container-xsmall
+            div.uk-margin-medium-bottom.uk-card.uk-card-default.uk-card-body
+                h2.uk-heading-line.uk-text-center
+                    | 新楓之谷 淫小築
+                ul.uk-list
+                    li 1. 點擊「註冊公會會員」
+                    li 2. 透過 LINE 登入
+                    li 3. 輸入邀請碼
+                    li 4. 完成會籍登錄
+            a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/login')
                 | 註冊公會會員
-        a(href='/users')
-            button
+            a.uk-button.uk-button-primary.uk-width-1-1(href='/users')
                 | 查閱會員列表

@@ -39,7 +39,7 @@ router.get('/admin', (ctx, next) => {
     }
 });
 
-router.post('/admin', (ctx, next) => {
+router.post('/generate-invite-code', (ctx, next) => {
     const body = ctx.request.body;
 
     if (body) {
@@ -49,9 +49,17 @@ router.post('/admin', (ctx, next) => {
             charName: player,
             manager,
         });
+
+        if (!player || !manager) {
+            ctx.status = 400;
+            ctx.body = '錯誤的角色名稱';
+            return;
+        }
+
         const inviteCode = Buffer.from(data, 'utf8').toString('hex');
 
-        ctx.body = inviteCode;
+        const html = renderHtml('./src/views/invite-code.pug', { manager, player, inviteCode });
+        ctx.body = html;
     }
 });
 
@@ -70,31 +78,46 @@ router.get('/register', (ctx, next) => {
 });
 
 router.post('/register', async (ctx, next) => {
-    const body = ctx.request.body;
+    try {
+        const body = ctx.request.body;
 
-    if (body) {
-        // Decode inviteCode.
-        const { inviteCode, displayName, lineID, pictureURL } = body as any;
-        const data = Buffer.from(inviteCode, 'hex').toString('utf8');
-        const { charName, manager } = JSON.parse(data);
+        if (body) {
+            // Decode inviteCode.
+            const { inviteCode, displayName, lineID, pictureURL } = body as any;
+            const data = Buffer.from(inviteCode, 'hex').toString('utf8');
+            const { charName, manager } = JSON.parse(data);
 
-        // Parse the character data.
-        const character = await getCharData(charName);
+            if (!charName || !manager) {
+                ctx.status = 400;
+                ctx.body = '錯誤的邀請碼';
+                return;
+            }
 
-        await addUser({
-            charName,
-            displayName,
-            manager,
-            lineID,
-            pictureURL,
-            avatarURL: character && character.avatarURL,
-            job: character && character.job,
-        });
+            if (!displayName || !lineID) {
+                ctx.status = 400;
+                ctx.body = '無法取得 LINE 用戶資訊';
+                return;
+            }
 
-        return ctx.redirect('/users');
+            // Parse the character data.
+            const character = await getCharData(charName);
+
+            // Add user into storage.
+            await addUser({
+                charName,
+                displayName,
+                manager,
+                lineID,
+                pictureURL,
+                avatarURL: character && character.avatarURL,
+                job: character && character.job,
+            });
+
+            return ctx.redirect('/users');
+        }
+    } catch (error) {
+        return ctx.redirect('/');
     }
-
-    return ctx.redirect('/');
 });
 
 export { router };
