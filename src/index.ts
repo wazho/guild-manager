@@ -2,7 +2,7 @@ import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as session from 'koa-session';
 import { passport } from './libs/passport-line';
-import { indexRouter, lineLoginRouter } from './routes/';
+import { indexRouter, lineLoginRouter, usersRouter } from './routes/';
 
 const app = new Koa();
 
@@ -17,4 +17,6 @@ app
     .use(indexRouter.allowedMethods())
     .use(lineLoginRouter.routes())
     .use(lineLoginRouter.allowedMethods())
+    .use(usersRouter.routes())
+    .use(usersRouter.allowedMethods())
     .listen(3000);

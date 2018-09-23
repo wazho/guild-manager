@@ -27,6 +27,9 @@ export async function getCharData(charName: string, serverID = '6') {
             name: charData.CharacterName,
             job: charData.JobName,
             avatarURL: charData.Avatar_CharacterLookURL,
+            level: charData.Level,
+            unionLevel: charData.UnionLevel,
+            importTime: charData.ImportTime,
         }
     } catch (e) {
         return undefined;

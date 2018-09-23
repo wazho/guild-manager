@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
+import { promisify } from 'util';
 import { google } from 'googleapis';
+import { googleApis } from '../config';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -9,6 +11,7 @@ const TOKEN_PATH = 'token.json';
 // Load client secrets from a local file.
 const content = fs.readFileSync('./credentials.json', { encoding: 'utf-8'});
 const credentials = JSON.parse(content)
+
 // Authorize a client with credentials, then call the Google Sheets API.
 interface IProfile {
     charName: string;
@@ -16,10 +19,9 @@ interface IProfile {
     manager: string;
     lineID: string;
     pictureURL: string;
+    avatarURL?: string;
+    job?: string;
 }
-
-export const addUser = (profile: IProfile) => authorize(credentials, insertUser.bind(null, profile));
-// authorize(credentials, listMajors);
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -27,7 +29,7 @@ export const addUser = (profile: IProfile) => authorize(credentials, insertUser.
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials: any, callback: any) {
+async function authorize(credentials: any, callback: any) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
@@ -73,61 +75,83 @@ function getNewToken(oAuth2Client: any, callback: any) {
 }
 
 /**
- * Prints the names and majors of students in a sample spreadsheet:
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function listMajors(auth: any) {
-    const sheets = google.sheets({ version: 'v4', auth: 'AIzaSyDODbcPAYSRM5Hc1A7idaKpsSw9SlTlWVE' });
-
-    sheets.spreadsheets.values.get({
-        spreadsheetId: '17vy4xTlfBe0YZeRB2DygK22KJpCZW27reoEUl46TX7g',
-        range: 'members!A1:F',
-    }, (err: any, res: any) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const rows = res.data.values;
-        if (rows.length) {
-            // Print columns A and E, which correspond to indices 0 and 4.
-            rows.map((row: any) => {
-                console.log(`${row}`);
-            });
-        } else {
-            console.log('No data found.');
-        }
+async function readUsers() {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth: googleApis.apiKey,
     });
+
+    const getValues = promisify(sheets.spreadsheets.values.get);
+
+    try {
+        const res = await getValues({
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.sheetName}!A2:J`,
+        });
+
+        const rows: string[][] = res.data.values;
+        const users: IProfile[] = rows.map((row) => ({
+            charName: row[0],
+            displayName: row[1],
+            status: row[2],
+            manager: row[3],
+            lineID: row[4],
+            pictureURL: row[5],
+            avatarURL: row[6],
+            job: row[7],
+            firstCreated: row[8],
+            lastUpdated: row[9],
+        }));
+    
+        return users;
+    } catch (err) {
+        return [];
+    }
 }
 
-
-function insertUser(profile: IProfile, auth: any) {
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    sheets.spreadsheets.values.append({
+async function insertUser(profile: IProfile, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
         auth,
-        spreadsheetId: '17vy4xTlfBe0YZeRB2DygK22KJpCZW27reoEUl46TX7g',
-        range: 'A1',
-        includeValuesInResponse: false,
-        insertDataOption: 'INSERT_ROWS',
-        responseDateTimeRenderOption: 'FORMATTED_STRING',
-        responseValueRenderOption: 'UNFORMATTED_VALUE',
-        valueInputOption: 'RAW',
-        resource: {
-            'values': [
-                [
-                    profile.charName,
-                    profile.displayName,
-                    '一般會員',
-                    profile.manager,
-                    profile.lineID,
-                    profile.pictureURL,
-                    '',
-                    (new Date).toLocaleString(),
-                    (new Date).toLocaleString(),
-                ]
-            ]
-        },
-    }, (err: any, response: any) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
     });
+
+    const appendValues = promisify(sheets.spreadsheets.values.append);
+
+    try {
+        const res = await appendValues({
+            auth,
+            spreadsheetId: '17vy4xTlfBe0YZeRB2DygK22KJpCZW27reoEUl46TX7g',
+            range: 'A1',
+            includeValuesInResponse: false,
+            insertDataOption: 'INSERT_ROWS',
+            responseDateTimeRenderOption: 'FORMATTED_STRING',
+            responseValueRenderOption: 'UNFORMATTED_VALUE',
+            valueInputOption: 'RAW',
+            resource: {
+                'values': [
+                    [
+                        profile.charName,
+                        profile.displayName,
+                        '會員',
+                        profile.manager,
+                        profile.lineID,
+                        profile.pictureURL,
+                        profile.avatarURL,
+                        profile.job,
+                        (new Date).toLocaleString(),
+                        (new Date).toLocaleString(),
+                    ]
+                ]
+            },
+        });
+
+        return;
+    } catch (err) {
+        return;
+    }
 }
+
+export const addUser = (profile: IProfile) => authorize(credentials, insertUser.bind(null, profile));
+export const getUsers = readUsers;

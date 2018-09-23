@@ -1,0 +1,18 @@
+doctype html
+html(lang='en')
+    head
+        title
+            | 新楓之谷 - 淫小築 - 邀請碼生成
+
+        style(type='text/css').
+            button {
+                color: blue;
+            }
+
+    body
+        h2
+            | 請輸入管理者的遊戲名稱與被邀請者遊戲名稱
+        form(action='/admin' method='post')
+            input#manager(name='manager' type='text')
+            input#player(name='player' type='text')
+            input(type='submit')

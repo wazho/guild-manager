@@ -1,0 +1,20 @@
+doctype html
+html(lang='en')
+    head
+        title
+            | 新楓之谷 - 淫小築 - 入會註冊
+
+        style(type='text/css').
+            button {
+                color: blue;
+            }
+
+    body
+        h2
+            | 請輸入管理群提供的邀請代碼
+        form(action='/register' method='post')
+            input#inviteCode(name='inviteCode' type='text')
+            input#displayName(name='displayName' type='text' value= displayName)
+            input#lineID(name='lineID' type='text' value= lineID)
+            input#pictureURL(name='pictureURL' type='text' value= pictureURL)
+            input(type='submit')

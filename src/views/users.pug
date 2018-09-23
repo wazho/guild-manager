@@ -1,0 +1,79 @@
+doctype html
+html(lang='en')
+    head
+        title
+            | 新楓之谷 - 淫小築 - 成員列表
+        script(type='text/javascript').
+            if (foo) bar(1 + 5)
+
+        style(type='text/css').
+            .cards {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+            }
+            .profile-card {
+                width: 100%;
+                min-width: 150px;
+                max-width: 250px;
+                margin: 10px;
+                text-align: center;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            .profile-card .header {
+                display: flex;
+                align-items: center;
+                background: rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/circles-light.png") repeat scroll 0% 0%;
+                padding: .5em 1em;
+            }
+            .avatar-picture {
+                width: 100%;
+                margin-top: 1em;
+            }
+            .avatar-picture img {
+                width: 100px;
+                height: 100px;
+            }
+            .profile-content {
+                padding: .3em 1em 1em 1em;
+            }
+            .avatar-name {
+                font-size: 1.5em;
+                letter-spacing: .1em;
+            }
+            .profile-card .footer {
+                display: flex;
+                align-items: center;
+                background: rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/circles-light.png") repeat scroll 0% 0%;
+                padding: .5em 1em;
+            }
+            .user-picture {
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+            }
+            .user-name {
+                margin-left: .5em;
+            }
+
+    body
+        div.cards
+            each user in users
+                div.profile-card(
+                    style={
+                        'background': 'rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/leaves.png") repeat scroll 0% 0%',
+                    }
+                )
+                    div.header
+                        | #{user.status}
+                    div.avatar-picture
+                        img(src= user.avatarURL)
+                    div.profile-content
+                        div.avatar-name
+                            | #{user.charName}
+                        div #{user.job || '未知'}
+                    div.footer
+                        img.user-picture(src= user.pictureURL)
+                        div.user-name
+                            | #{user.displayName}

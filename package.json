@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "googleapis": "^27.0.0",
+    "html-minifier": "^3.5.20",
     "koa": "^2.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-passport": "^4.1.1",
@@ -19,9 +20,12 @@
     "koa-session": "^5.9.0",
     "node-fetch": "^2.2.0",
     "passport": "^0.4.0",
-    "passport-line": "0.0.4"
+    "passport-line": "0.0.4",
+    "pug": "^2.0.3",
+    "qs": "^6.5.2"
   },
   "devDependencies": {
+    "@types/html-minifier": "^3.5.2",
     "@types/koa": "^2.0.46",
     "@types/koa-bodyparser": "^5.0.1",
     "@types/koa-passport": "^4.0.2",
@@ -30,6 +34,8 @@
     "@types/node": "^10.9.4",
     "@types/node-fetch": "^2.1.2",
     "@types/passport": "^0.4.6",
+    "@types/pug": "^2.0.4",
+    "@types/qs": "^6.5.1",
     "typescript": "^3.0.3"
   }
 }
