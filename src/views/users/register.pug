@@ -1,4 +1,4 @@
-extends base.pug
+extends ../base.pug
 block title
     | 新楓之谷 - 淫小築 - 入會註冊
 
@@ -17,7 +17,7 @@ block content
                         | 請留意
                     | 每組代碼是遊戲角色綁定的，無法重複使用或轉帳給他人。
 
-            form(action='/register', method='post')
+            form(action='/users/register', method='post')
                 div.uk-margin
                     label.uk-form-label(for='inviteCode')
                         | 邀請代碼

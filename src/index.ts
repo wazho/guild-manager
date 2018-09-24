@@ -4,7 +4,7 @@ import * as logger from 'koa-logger';
 import * as bodyParser from 'koa-bodyparser';
 import * as session from 'koa-session';
 import { passport } from './libs/passport-line';
-import { indexRouter, systemRouter, lineLoginRouter, usersRouter } from './routes/';
+import router from './routes/';
 
 const app = new Koa();
 
@@ -15,14 +15,8 @@ app
     .use(logger())
     .use(bodyParser())
     .use(session({}, app))
-    .use(systemRouter.routes())
-    .use(systemRouter.allowedMethods())
     .use(passport.initialize())
     .use(passport.session())
-    .use(indexRouter.routes())
-    .use(indexRouter.allowedMethods())
-    .use(lineLoginRouter.routes())
-    .use(lineLoginRouter.allowedMethods())
-    .use(usersRouter.routes())
-    .use(usersRouter.allowedMethods())
+    .use(router.routes())
+    .use(router.allowedMethods())
     .listen(3000);

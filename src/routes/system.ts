@@ -1,4 +1,6 @@
+// Node modules.
 import * as Router from 'koa-router';
+// Local modules.
 import { init, genToken } from '../libs/google-apis';
 import { renderHtml } from '../libs/render-html';
 
@@ -6,7 +8,8 @@ const router = new Router();
 
 router.get('/init', async (ctx, next) => {
     const handler = (authURL: string) => {
-        const html = renderHtml('./src/views/system.pug', { authURL });
+        const path = './src/views/system/init.pug';
+        const html = renderHtml(path, { authURL });
         ctx.body = html;
     };
 

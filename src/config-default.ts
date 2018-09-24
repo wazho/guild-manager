@@ -8,7 +8,7 @@
 export const lineChannel = {
     channelID: 'your-channel-id',
     channelSecret: 'your-channel-secret',
-    callbackURL: 'http://your-domin/auth/line/callback',
+    callbackURL: 'http://your-domin/login/auth/line/callback',
 };
 
 /**

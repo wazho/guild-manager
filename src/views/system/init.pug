@@ -1,4 +1,4 @@
-extends base.pug
+extends ../base.pug
 block title
     | 系統首次建置
 
@@ -20,7 +20,7 @@ block content
                         | 請留意
                     | 進行登入的帳號，必須擁有編輯該 spreadsheet 的權限。
 
-            form(action='/init', method='post')
+            form(action='/system/init', method='post')
                 div.uk-margin
                     label.uk-form-label(for='code')
                         | 代碼

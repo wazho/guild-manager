@@ -1,7 +1,8 @@
+// Node modules.
 import * as fs from 'fs';
-import * as readline from 'readline';
 import { promisify } from 'util';
 import { google } from 'googleapis';
+// Local modules.
 import { googleApis } from '../config';
 
 // If modifying these scopes, delete token.json.

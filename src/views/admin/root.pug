@@ -1,16 +1,19 @@
-extends base.pug
+extends ../base.pug
 block title
     | 新楓之谷 - 淫小築 - 邀請碼生成
 
 block content
     div.uk-section.uk-section-muted
         div.uk-container.uk-container-xsmall
-            form(action='/generate-invite-code' method='post')
+            form(action='/admin/invite-code' method='post')
                 h2.uk-heading-line.uk-text-center
                     | 邀請碼生成
 
-                div.uk-card
-                    | 相同角色名稱生成的邀請碼，只能夠被使用一次
+                div.uk-alert
+                    div.uk-margin
+                        span.uk-label.uk-margin-right
+                            | 請留意
+                        | 相同角色名稱生成的邀請碼，只能夠被使用一次。
 
                 div.uk-margin
                     label.uk-form-label(for='manager')

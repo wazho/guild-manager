@@ -1,5 +1,7 @@
+// Node modules.
 import * as passport from 'koa-passport';
 import { Strategy as LineStrategy } from 'passport-line';
+// Local modules.
 import { lineChannel } from '../config';
 
 passport.serializeUser((user: any, done) => {

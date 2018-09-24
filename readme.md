@@ -48,4 +48,4 @@ $ yarn start
 
 ## Initial your environment
 
-under construction
+Visit http://localhost:3000/system/init to finish it.
