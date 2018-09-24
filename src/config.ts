@@ -6,9 +6,9 @@
  * Step 5: [tab] Channel settings > Paste 'Channel ID' and 'Channel secret' below
  */
 export const lineChannel = {
-    channelID: 'your-channel-id',
-    channelSecret: 'your-channel-secret',
-    callbackURL: 'http://your-domin/auth/line/callback',
+    channelID: process.env.LINE_CHANNEL_ID,
+    channelSecret: process.env.LINE_CHANNEL_SECRET,
+    callbackURL: process.env.LINE_CALLBACK_URL,
 };
 
 /**
@@ -23,7 +23,7 @@ export const lineChannel = {
  * Step 9: Create an spreadsheet, then copy ID and sheet below
  */
 export const googleApis = {
-    apiKey: 'your-api-key',
-    spreadsheetId: 'your-spreadsheet-id',
-    sheetName: 'your-name-of-sheet',
+    apiKey: process.env.GOOGLE_APIS_API_KEY,
+    spreadsheetId: process.env.GOOGLE_APIS_SPREADSHEET_ID,
+    sheetName: process.env.GOOGLE_APIS_SHEET_NAME,
 };

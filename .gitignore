@@ -75,4 +75,3 @@ dist/
 # personal settings
 token.json
 credentials.json
-src/config.ts
