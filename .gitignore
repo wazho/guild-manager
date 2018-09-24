@@ -71,3 +71,8 @@ jspm_packages/
 
 # dist of project
 dist/
+
+# personal settings
+token.json
+credentials.json
+src/config.ts
