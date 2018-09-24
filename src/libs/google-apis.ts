@@ -17,6 +17,7 @@ const credentials = JSON.parse(content);
 interface IProfile {
     charName: string;
     displayName: string;
+    status: '公會長' | '副會長' | '會員' | '離會會員';
     manager: string;
     lineID: string;
     pictureURL: string;
@@ -105,7 +106,7 @@ async function readUsers() {
         const users: IProfile[] = rows.map((row) => ({
             charName: row[0],
             displayName: row[1],
-            status: row[2],
+            status: row[2] as any,
             manager: row[3],
             lineID: row[4],
             pictureURL: row[5],
@@ -152,7 +153,7 @@ async function insertUser(profile: IProfile, callback: any, auth: any) {
                     [
                         profile.charName,
                         profile.displayName,
-                        '會員',
+                        profile.status,
                         profile.manager,
                         profile.lineID,
                         profile.pictureURL,
@@ -184,3 +185,9 @@ export const addUser = (profile: IProfile, errorHandler: any) =>
         .catch(errorHandler);
 
 export const getUsers = readUsers;
+
+export const findUser = async (lineID: string) => {
+    const users = await readUsers();
+    const found = users.find((user) => user.lineID === lineID);
+    return found;
+};

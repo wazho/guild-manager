@@ -13,10 +13,14 @@ app.keys = ['secret'];
 app
     .use(serve('public'))
     .use(logger())
+    // Body parser.
     .use(bodyParser())
+    // Sessions.
     .use(session({}, app))
+    // Passport.
     .use(passport.initialize())
     .use(passport.session())
+    // Routers.
     .use(router.routes())
     .use(router.allowedMethods())
     .listen(3000);

@@ -3,16 +3,30 @@ import * as Router from 'koa-router';
 import { stringify } from 'qs';
 // Local modules.
 import { passport } from '../libs/passport-line';
+import { findUser } from '../libs/google-apis';
 
 const router = new Router();
 
-router.get('/', (ctx, next) => ctx.redirect('/login/auth/line'));
+router.get('/login', (ctx, next) => ctx.redirect('/auth/line'));
+
+router.get('/logout', (ctx, next) => {
+    ctx.logout();
+    ctx.redirect('/');
+});
 
 router.get('/auth/line', passport.authenticate('line'));
 
 router.get('/auth/line/callback', async (ctx, next) => {
     await passport.authenticate('line', async (err, lineProfile) => {
         if (!err && lineProfile) {
+            const user = await findUser(lineProfile.id);
+
+            // Is member already.
+            if (user) {
+                ctx.logIn(lineProfile, (err: any) => next());
+                return ctx.redirect('/');
+            }
+
             // Encode LINE profile.
             const data = JSON.stringify({
                 displayName: lineProfile.displayName,
@@ -21,7 +35,7 @@ router.get('/auth/line/callback', async (ctx, next) => {
             });
             const token = Buffer.from(data, 'utf8').toString('hex');
             const querystring = stringify({ token });
-
+            
             return ctx.redirect(`/users/register?${querystring}`);
         }
 

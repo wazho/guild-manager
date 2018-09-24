@@ -10,8 +10,11 @@ import { renderHtml } from '../libs/render-html';
 const indexRouter = new Router();
 
 indexRouter.get('/', (ctx, next) => {
+    const { user } = ctx.state;
+
     const path = './src/views/index.pug';
-    const html = renderHtml(path);
+    const html = renderHtml(path, { user });
+
     ctx.body = html;
 });
 
@@ -21,7 +24,7 @@ router
     .use('/', indexRouter.routes(), indexRouter.allowedMethods())
     .use('/system', systemRouter.routes(), systemRouter.allowedMethods())
     .use('/admin', adminRouter.routes(), adminRouter.allowedMethods())
-    .use('/login', loginRouter.routes(), loginRouter.allowedMethods())
+    .use(loginRouter.routes(), loginRouter.allowedMethods())
     .use('/users', usersRouter.routes(), usersRouter.allowedMethods());
 
 export default router;
