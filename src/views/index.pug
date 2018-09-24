@@ -15,6 +15,9 @@ block content
                 a.uk-button.uk-button-primary.uk-width-1-1(href='/login')
                     | 公會會員登入
             else
+                if ['公會長', '副會長'].includes(user.status)
+                    a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/admin')
+                        | 公會幹部管理頁面
                 if ['公會長', '副會長', '會員'].includes(user.status)
                     a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/users')
                         | 查閱會員列表
