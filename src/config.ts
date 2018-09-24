@@ -1,3 +1,6 @@
+export const webAppURL = process.env.WEB_APP_URL || 'http://localhost';
+export const port = process.env.PORT || 3000;
+
 /**
  * Step 1: Go to LINE developer https://developers.line.me/
  * Step 2: Add new provider or use exist provider
