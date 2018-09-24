@@ -1,6 +1,7 @@
 // Node modules.
 import * as Router from 'koa-router';
 // Local modules.
+import { webAppURL } from '../config';
 import { renderHtml } from '../libs/render-html';
 
 const router = new Router();
@@ -36,7 +37,7 @@ router.post('/invite-code', (ctx, next) => {
         const inviteCode = Buffer.from(data, 'utf8').toString('hex');
 
         const path = './src/views/admin/invite-code.pug';
-        const html = renderHtml(path, { manager, player, inviteCode });
+        const html = renderHtml(path, { manager, player, inviteCode, webAppURL });
         ctx.body = html;
     }
 });
