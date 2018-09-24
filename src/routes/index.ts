@@ -1,4 +1,5 @@
 import * as Router from 'koa-router';
+import { router as systemRouter } from './system';
 import { router as lineLoginRouter } from './line-login';
 import { router as usersRouter } from './users';
 
@@ -13,6 +14,7 @@ indexRouter.get('/', (ctx, next) => {
 
 export {
     indexRouter,
+    systemRouter,
     lineLoginRouter,
     usersRouter,
 };

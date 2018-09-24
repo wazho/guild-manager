@@ -5,6 +5,18 @@ block title
 block content
     div.uk-section.uk-section-muted
         div.uk-container.uk-container-xsmall
+            h1.uk-heading-line.uk-text-center
+                | 輸入邀請碼
+
+            div.uk-alert
+                div.uk-margin
+                    | 請聯繫淫小築公會幹部，並通過面試索取邀請碼。
+
+                div.uk-margin
+                    span.uk-label.uk-margin-right
+                        | 請留意
+                    | 每組代碼是遊戲角色綁定的，無法重複使用或轉帳給他人。
+
             form(action='/register', method='post')
                 div.uk-margin
                     label.uk-form-label(for='inviteCode')

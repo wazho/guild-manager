@@ -103,6 +103,7 @@ router.post('/register', async (ctx, next) => {
             const character = await getCharData(charName);
 
             // Add user into storage.
+            const errorHandler = (error: any) => console.warn(error);
             await addUser({
                 charName,
                 displayName,
@@ -111,9 +112,7 @@ router.post('/register', async (ctx, next) => {
                 pictureURL,
                 avatarURL: character && character.avatarURL,
                 job: character && character.job,
-            }, (error: any) => {
-                console.warn(error);
-            });
+            }, errorHandler);
 
             return ctx.redirect('/users');
         }

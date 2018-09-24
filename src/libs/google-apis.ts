@@ -9,8 +9,8 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
 
 // Load client secrets from a local file.
-const content = fs.readFileSync('./credentials.json', { encoding: 'utf-8'});
-const credentials = JSON.parse(content)
+const content = fs.readFileSync('./credentials.json', { encoding: 'utf-8' });
+const credentials = JSON.parse(content);
 
 // Authorize a client with credentials, then call the Google Sheets API.
 interface IProfile {
@@ -35,11 +35,14 @@ async function authorize(credentials: any, callback: any) {
 
     // Check if we have previously stored a token.
     try {
-        const token = fs.readFileSync(TOKEN_PATH, { encoding: 'utf-8'});
+        const token = fs.readFileSync(TOKEN_PATH, { encoding: 'utf-8' });
         oAuth2Client.setCredentials(JSON.parse(token));
         callback(oAuth2Client);
-    } catch (e) {
-        getNewToken(oAuth2Client, callback);
+    } catch (err) {
+        throw {
+            errorCode: 'ERR_ACCESS_TOKEN_FAIL',
+            error: err,
+        };
     }
 }
 
@@ -54,23 +57,29 @@ function getNewToken(oAuth2Client: any, callback: any) {
         access_type: 'offline',
         scope: SCOPES,
     });
-    console.log('Authorize this app by visiting this url:', authUrl);
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-    rl.question('Enter the code from that page here: ', (code) => {
-        rl.close();
-        oAuth2Client.getToken(code, (err: any, token: any) => {
-            if (err) return console.error('Error while trying to retrieve access token', err);
-            oAuth2Client.setCredentials(token);
-            // Store the token to disk for later program executions
-            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-                if (err) console.error(err);
-                console.log('Token stored to', TOKEN_PATH);
-            });
-            callback(oAuth2Client);
-        });
+
+    callback(authUrl);
+}
+
+
+function initialize(credentials: any, callback: any) {
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+    getNewToken(oAuth2Client, callback);
+}
+
+function generateToken(code: string) {
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+    oAuth2Client.getToken(code, (err: any, token: any) => {
+        if (err) {
+            return console.error('Error while trying to retrieve access token', err);
+        }
+
+        // Store the token to disk for later program executions.
+        fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
     });
 }
 
@@ -104,7 +113,7 @@ async function readUsers() {
             firstCreated: row[8],
             lastUpdated: row[9],
         }));
-    
+
         return users;
     } catch (err) {
         return [];
@@ -161,7 +170,16 @@ async function insertUser(profile: IProfile, callback: any, auth: any) {
     }
 }
 
-export const addUser = (profile: IProfile, callback: any) =>
-    authorize(credentials, insertUser.bind(null, profile, callback));
+export const init = (errorHandler: any) =>
+    authorize(credentials, () => null)
+        .catch((e) => initialize(credentials, errorHandler));
+
+export const genToken = async (code: string) =>
+    authorize(credentials, () => null)
+        .catch((e) => generateToken(code));
+
+export const addUser = (profile: IProfile, errorHandler: any) =>
+    authorize(credentials, insertUser.bind(null, profile, errorHandler))
+        .catch(errorHandler);
 
 export const getUsers = readUsers;
