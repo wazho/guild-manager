@@ -24,7 +24,8 @@ Quick access (readonly) to Google spreadsheet without other auth by using API ke
 6. [tab] API restrictions > Google Sheets API > Save
 7. Copy and paste the key to 'apiKey' below
 8. Go to Google Drive https://www.google.com/drive/
-9. Create an spreadsheet, then copy ID and sheet in `./src/config.ts`
+9. Create an spreadsheet, then copy ID and sheet in `./src/config-default.ts`
+10. Rename `./src/config-default.ts` to `./src/config.ts`
 
 ### OAuth 2.0 client IDs
 

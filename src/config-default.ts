@@ -26,4 +26,4 @@ export const googleApis = {
     apiKey: 'your-api-key',
     spreadsheetId: 'your-spreadsheet-id',
     sheetName: 'your-name-of-sheet',
-}
+};
