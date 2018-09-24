@@ -6,8 +6,8 @@
 1. Go to LINE developer https://developers.line.me/
 2. Add new provider or use exist provider
 3. Create new channel > LINE Login
-4. [tab] App settings > Enter your 'Callback URL' same with in `./src/config.ts`
-5. [tab] Channel settings > Paste 'Channel ID' and 'Channel secret' in `./src/config.ts`
+4. [tab] App settings > Enter your **Callback URL** same with in `./src/config.ts`
+5. [tab] Channel settings > Paste **Channel ID** and **Channel secret** in `./src/config.ts`
 
 
 ## Google APIs settings
@@ -22,7 +22,7 @@ Quick access (readonly) to Google spreadsheet without other auth by using API ke
 4. Create credentials > API key > Restrict key
 5. [tab] Application restrictions > None (dev) / HTTP referrers (prod)
 6. [tab] API restrictions > Google Sheets API > Save
-7. Copy and paste the key to 'apiKey' below
+7. Copy and paste the key to **apiKey** in `./src/config-default.ts`
 8. Go to Google Drive https://www.google.com/drive/
 9. Create an spreadsheet, then copy ID and sheet in `./src/config-default.ts`
 10. Rename `./src/config-default.ts` to `./src/config.ts`
@@ -32,7 +32,7 @@ Quick access (readonly) to Google spreadsheet without other auth by using API ke
 Offline access to your spreadsheet. Notice to protect your `credentials`, it has complete permission for your Google Spreadsheet.
 
 1. Follow above, create another credential > OAuth client ID > Other
-2. Click 'Download JSON' of this row
+2. Click icon **Download JSON** of this row
 3. Move this file to `./credentials.json`
 
 
