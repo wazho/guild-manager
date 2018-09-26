@@ -15,7 +15,8 @@ passport.deserializeUser(async (id: string, done) => {
 });
 
 passport.use(new LineStrategy(lineChannel, (accessToken: any, refreshToken: any, profile: any, done: any) => {
-    process.nextTick(() => done(null, profile));
+    const token = { accessToken, refreshToken };
+    process.nextTick(() => done(null, profile, token));
 }));
 
 export {

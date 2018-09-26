@@ -17,7 +17,7 @@ router.get('/logout', (ctx, next) => {
 router.get('/auth/line', passport.authenticate('line'));
 
 router.get('/auth/line/callback', async (ctx, next) => {
-    await passport.authenticate('line', async (err, lineProfile) => {
+    await passport.authenticate('line', async (err, lineProfile, token) => {
         if (!err && lineProfile) {
             const user = await findUser(lineProfile.id);
 

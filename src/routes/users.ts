@@ -70,6 +70,7 @@ router.post('/register', async (ctx, next) => {
 
             // Add user into storage.
             const errorHandler = (error: any) => console.warn(error);
+
             await addUser({
                 charName,
                 displayName,
