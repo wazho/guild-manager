@@ -2,9 +2,20 @@ extends ../base.pug
 block title
     | 新楓之谷 - 淫小築 - 入會註冊
 
+block style
+    style(type='text/css').
+        body {
+            background: url(https://orig00.deviantart.net/585a/f/2016/125/e/a/_maplestory_background__walk_in_the_park_by_bboki-da1e7rd.png) no-repeat scroll center center / cover;
+        }
+
+        .content {
+            padding-top: 2em;
+            background: rgba(255, 255, 255, .85);
+        }
+
 block content
-    div.uk-section.uk-section-muted
-        div.uk-container.uk-container-xsmall
+    div.uk-section.uk-position-center-left.uk-position-center-right
+        div.content.uk-container.uk-container-xsmall
             h1.uk-heading-line.uk-text-center
                 | 輸入邀請碼
 
