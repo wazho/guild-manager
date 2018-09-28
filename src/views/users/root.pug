@@ -4,6 +4,11 @@ block title
 
 block style
     style(type='text/css').
+        html, body {
+            overflow: scroll;
+        }
+
+    style(type='text/css').
         .cards {
             display: flex;
             flex-wrap: wrap;
@@ -21,15 +26,23 @@ block style
         .profile-card .header {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             background: rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/circles-light.png") repeat scroll 0% 0%;
             padding: .5em 1em;
+        }
+        
+        .profile-card .header .status {
+            margin-right:auto;
+        }
+        .profile-card .header img.group-icon {
+            margin-left: .25em;
         }
         .avatar-picture {
             width: 100%;
             height: 100px;
             margin-top: 1em;
         }
-        .avatar-picture img {
+        .avatar-picture img.avatar {
             width: 100px;
             height: 100px;
         }
@@ -56,23 +69,32 @@ block style
         }
 
 block content
-    div.cards
-        each user in users
-            div.profile-card(
-                style={
-                    'background': 'rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/leaves.png") repeat scroll 0% 0%',
-                }
-            )
-                div.header
-                    | #{user.status}
-                div.avatar-picture
-                    if user.avatarURL
-                        img.uk-border-rounded(src= user.avatarURL, width='200', height='200')
-                div.profile-content
-                    div.avatar-name
-                        | #{user.charName}
-                    div #{user.job || '未知'}
-                div.footer
-                    img.uk-border-pill(src= user.pictureURL, width='35', height='35')
-                    div.user-name
-                        | #{user.displayName}
+    div.uk-container
+        nav.uk-navbar-container(uk-sticky='bottom: #offset', uk-navbar)
+            div.uk-navbar-left
+                div.uk-navbar-item
+                    form.uk-search.uk-search-navbar.uk-width-1-1
+                        span(uk-search-icon)
+                        input.uk-search-input(type='search', placeholder='查查 ID 或 LINE')
+        div.cards
+            each user in users
+                div.profile-card(
+                    style={
+                        'background': 'rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/leaves.png") repeat scroll 0% 0%',
+                    }
+                )
+                    div.header
+                        span.status #{user.status}
+                        img.group-icon.uk-border-pill(uk-tooltip= '困難露希妲 - 1 團', src= '/assets/bosses/lucid-hard.png', width='25', height='25')
+                        img.group-icon.uk-border-pill(uk-tooltip= '困難威爾 - 1 團', src= '/assets/bosses/will-hard.png', width='25', height='25')
+                    div.avatar-picture
+                        if user.avatarURL
+                            img.avatar.uk-border-rounded(src= user.avatarURL, width='200', height='200')
+                    div.profile-content
+                        div.avatar-name
+                            | #{user.charName}
+                        div #{user.job || '未知'}
+                    div.footer
+                        img.uk-border-pill(src= user.pictureURL, width='35', height='35')
+                        div.user-name
+                            | #{user.displayName}

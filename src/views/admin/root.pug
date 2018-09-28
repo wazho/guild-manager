@@ -2,37 +2,48 @@ extends ../base.pug
 block title
     | 新楓之谷 - 淫小築 - 邀請碼生成
 
-block content
-    div.uk-section.uk-section-muted
-        div.uk-container.uk-container-xsmall
-            form(action='/admin/invite-code' method='post')
-                h2.uk-heading-line.uk-text-center
-                    | 邀請碼生成
+block style
+    style(type='text/css').
+        body {
+            background: url(https://orig00.deviantart.net/585a/f/2016/125/e/a/_maplestory_background__walk_in_the_park_by_bboki-da1e7rd.png) no-repeat scroll center center / cover;
+        }
 
-                div.uk-alert
+        .content {
+            padding-top: 2em;
+            background: rgba(255, 255, 255, .85);
+        }
+
+block content
+    div.uk-section.uk-position-center-left.uk-position-center-right
+        div.uk-container.uk-container-xsmall
+            div.content.uk-margin-medium-bottom.uk-card.uk-card-default.uk-card-body
+                form(action='/admin/invite-code' method='post')
+                    h2.uk-heading-line.uk-text-center
+                        | 邀請碼生成
+
                     div.uk-margin
-                        span.uk-label.uk-margin-right
+                        span.uk-label.uk-margin-small-right
                             | 請留意
                         | 相同角色名稱生成的邀請碼，只能夠被使用一次。
 
-                div.uk-margin
-                    label.uk-form-label(for='manager')
-                        | 管理者
-                    div.uk-form-controls
-                        div.uk-inline
-                            span.uk-form-icon(uk-icon='icon: user')
-                            input#manager.uk-input(name='manager' type='text')
+                    div.uk-margin
+                        label.uk-form-label(for='manager')
+                            | 管理者
+                        div.uk-form-controls
+                            div.uk-inline
+                                span.uk-form-icon(uk-icon='icon: user')
+                                input#manager.uk-input(name='manager' type='text')
 
-                div.uk-margin
-                    label.uk-form-label(for='player')
-                        | 玩家角色名稱
-                    div.uk-form-controls
-                        div.uk-inline
-                            span.uk-form-icon(uk-icon='icon: user')
-                            input#player.uk-input(name='player' type='text')
+                    div.uk-margin
+                        label.uk-form-label(for='player')
+                            | 玩家角色名稱
+                        div.uk-form-controls
+                            div.uk-inline
+                                span.uk-form-icon(uk-icon='icon: user')
+                                input#player.uk-input(name='player' type='text')
 
-                input.uk-button.uk-button-primary.uk-align-right(type='submit', value='送出')
+                    input.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出')
 
-            a(href='/')
-                button.uk-button.uk-align-left
-                    | 回首頁
+                a(href='/')
+                    button.uk-button.uk-align-left.uk-margin-remove-bottom
+                        | 回首頁
