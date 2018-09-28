@@ -28,5 +28,6 @@ export const lineChannel = {
 export const googleApis = {
     apiKey: process.env.GOOGLE_APIS_API_KEY,
     spreadsheetId: process.env.GOOGLE_APIS_SPREADSHEET_ID,
-    sheetName: process.env.GOOGLE_APIS_SHEET_NAME,
+    memberSheetName: process.env.GOOGLE_APIS_MEMBERS_SHEET_NAME,
+    lineProfileSheetName: process.env.GOOGLE_APIS_LINE_PROFILES_SHEET_NAME,
 };

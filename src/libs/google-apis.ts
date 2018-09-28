@@ -23,6 +23,17 @@ interface IProfile {
     pictureURL: string;
     avatarURL?: string;
     job?: string;
+    firstCreated?: string;
+    lastUpdated?: string;
+}
+
+interface ISocialData {
+    lineID: string;
+    displayName: string;
+    pictureURL?: string;
+    encodedToken: string;
+    firstCreated?: string;
+    lastUpdated?: string;
 }
 
 /**
@@ -64,14 +75,14 @@ function getNewToken(oAuth2Client: any, callback: any) {
 }
 
 
-function initialize(credentials: any, callback: any) {
+function _initialize(credentials: any, callback: any) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
     getNewToken(oAuth2Client, callback);
 }
 
-function generateToken(code: string) {
+function _generateToken(code: string) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
@@ -85,10 +96,7 @@ function generateToken(code: string) {
     });
 }
 
-/**
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
- */
-async function readUsers() {
+async function _getUsers() {
     const sheets = google.sheets({
         version: 'v4',
         auth: googleApis.apiKey,
@@ -99,7 +107,7 @@ async function readUsers() {
     try {
         const res = await getValues({
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.sheetName}!A2:J`,
+            range: `${googleApis.memberSheetName}!A2:J`,
         });
 
         const rows: string[][] = res.data.values;
@@ -122,14 +130,14 @@ async function readUsers() {
     }
 }
 
-async function insertUser(profile: IProfile, callback: any, auth: any) {
+async function _addUser(profile: IProfile, social: ISocialData, callback: any, auth: any) {
     const sheets = google.sheets({
         version: 'v4',
         auth,
     });
 
     // Avoid duplicate user be added.
-    const users = await readUsers();
+    const users = await _getUsers();
     const found = users.find((user) => user.lineID === profile.lineID);
 
     if (found) {
@@ -141,8 +149,8 @@ async function insertUser(profile: IProfile, callback: any, auth: any) {
     try {
         const res = await appendValues({
             auth,
-            spreadsheetId: '17vy4xTlfBe0YZeRB2DygK22KJpCZW27reoEUl46TX7g',
-            range: 'A1',
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.memberSheetName}!A2`,
             includeValuesInResponse: false,
             insertDataOption: 'INSERT_ROWS',
             responseDateTimeRenderOption: 'FORMATTED_STRING',
@@ -166,28 +174,151 @@ async function insertUser(profile: IProfile, callback: any, auth: any) {
             },
         });
 
+        const res2 = await appendValues({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.lineProfileSheetName}!A2`,
+            includeValuesInResponse: false,
+            insertDataOption: 'INSERT_ROWS',
+            responseDateTimeRenderOption: 'FORMATTED_STRING',
+            responseValueRenderOption: 'UNFORMATTED_VALUE',
+            valueInputOption: 'RAW',
+            resource: {
+                'values': [
+                    [
+                        social.lineID,
+                        social.displayName,
+                        social.pictureURL,
+                        social.encodedToken,
+                        (new Date).toLocaleString(),
+                        (new Date).toLocaleString(),
+                    ]
+                ]
+            },
+        });
+
         return callback(null);
     } catch (err) {
         return callback('ERR_APPEND_VALUES');
     }
 }
 
-export const init = (errorHandler: any) =>
-    authorize(credentials, () => null)
-        .catch((e) => initialize(credentials, errorHandler));
+async function _getLineProfiles() {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth: googleApis.apiKey,
+    });
 
-export const genToken = async (code: string) =>
-    authorize(credentials, () => null)
-        .catch((e) => generateToken(code));
+    const getValues = promisify(sheets.spreadsheets.values.get);
 
-export const addUser = (profile: IProfile, errorHandler: any) =>
-    authorize(credentials, insertUser.bind(null, profile, errorHandler))
+    try {
+        const res = await getValues({
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.lineProfileSheetName}!A2:F`,
+        });
+
+        const rows: string[][] = res.data.values;
+        const socialDatas: ISocialData[] = rows.map((row) => ({
+            lineID: row[0],
+            displayName: row[1],
+            pictureURL: row[2] as any,
+            encodedToken: row[3],
+            firstCreated: row[4],
+            lastUpdated: row[5],
+        }));
+
+        return socialDatas;
+    } catch (err) {
+        return [];
+    }
+}
+
+async function _updateLineProfile(rowNum: number, social: ISocialData, callback: any, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth,
+    });
+
+    const updateValues = promisify(sheets.spreadsheets.values.update);
+
+    try {
+        // Update sheet line_profiles.
+        const res = await updateValues({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.lineProfileSheetName}!A${rowNum}:F`,
+            includeValuesInResponse: false,
+            responseDateTimeRenderOption: 'FORMATTED_STRING',
+            responseValueRenderOption: 'UNFORMATTED_VALUE',
+            valueInputOption: 'RAW',
+            resource: {
+                'values': [
+                    [
+                        undefined,           // LINE ID, won't replace. 
+                        social.displayName,
+                        social.pictureURL,
+                        undefined,           // Encoded token.
+                        undefined,           // First create time.
+                        (new Date).toLocaleString(), // Last update time.
+                    ]
+                ]
+            },
+        });
+
+        // Update sheet members.
+        const res2 = await updateValues({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            range: `${googleApis.memberSheetName}!B${rowNum}:J`,
+            includeValuesInResponse: false,
+            responseDateTimeRenderOption: 'FORMATTED_STRING',
+            responseValueRenderOption: 'UNFORMATTED_VALUE',
+            valueInputOption: 'RAW',
+            resource: {
+                'values': [
+                    [
+                        social.displayName,
+                        undefined,           // Status.
+                        undefined,           // Manager.
+                        undefined,           // LINE ID.
+                        social.pictureURL,
+                        undefined,           // Avatar URL.
+                        undefined,           // Job of character.
+                        undefined,           // First create time.
+                        (new Date).toLocaleString(), // Last update time.
+                    ]
+                ]
+            },
+        });
+
+        return callback(null);
+    } catch (err) {
+        return callback('ERR_UPDATE_VALUES');
+    }
+}
+
+export const initialize = (errorHandler: any) =>
+    authorize(credentials, () => null)
+        .catch((e) => _initialize(credentials, errorHandler));
+
+export const generateToken = async (code: string) =>
+    authorize(credentials, () => null)
+        .catch((e) => _generateToken(code));
+
+export const addUser = (profile: IProfile, social: ISocialData, errorHandler: any) =>
+    authorize(credentials, _addUser.bind(null, profile, social, errorHandler))
         .catch(errorHandler);
 
-export const getUsers = readUsers;
+export const updateLineProfile = (rowNum: number, social: ISocialData, errorHandler: any) =>
+    authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
+        .catch(errorHandler);
+
+export const getUsers = _getUsers;
+
+export const getLineProfiles = _getLineProfiles;
 
 export const findUser = async (lineID: string) => {
-    const users = await readUsers();
+    const users = await _getUsers();
     const found = users.find((user) => user.lineID === lineID);
     return found;
 };

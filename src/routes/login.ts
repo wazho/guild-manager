@@ -32,9 +32,10 @@ router.get('/auth/line/callback', async (ctx, next) => {
                 displayName: lineProfile.displayName,
                 lineID: lineProfile.id,
                 pictureURL: lineProfile.pictureUrl,
+                token,
             });
-            const token = Buffer.from(data, 'utf8').toString('hex');
-            const querystring = stringify({ token });
+            const code = Buffer.from(data, 'utf8').toString('hex');
+            const querystring = stringify({ code });
             
             return ctx.redirect(`/users/register?${querystring}`);
         }

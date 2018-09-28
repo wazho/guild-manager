@@ -31,12 +31,12 @@ router.get('/', async (ctx, next) => {
 router.get('/register', (ctx, next) => {
     try {
         // Decode LINE profile.
-        const { token } = parse(ctx.querystring);
-        const data = Buffer.from(token, 'hex').toString('utf8');
-        const { displayName, lineID, pictureURL } = JSON.parse(data);
+        const { code } = parse(ctx.querystring);
+        const data = Buffer.from(code, 'hex').toString('utf8');
+        const { displayName, pictureURL } = JSON.parse(data);
 
         const path = './src/views/users/register.pug';
-        const html = renderHtml(path, { displayName, lineID, pictureURL });
+        const html = renderHtml(path, { displayName, code });
         ctx.body = html;
     } catch (e) {
         return ctx.redirect('/');
@@ -48,10 +48,15 @@ router.post('/register', async (ctx, next) => {
         const body = ctx.request.body;
 
         if (body) {
-            // Decode inviteCode.
-            const { inviteCode, displayName, lineID, pictureURL } = body as any;
-            const data = Buffer.from(inviteCode, 'hex').toString('utf8');
-            const { charName, manager } = JSON.parse(data);
+            // Decode inviteCode and code.
+            const { inviteCode, code } = body as any;
+
+            const invitationData = Buffer.from(inviteCode, 'hex').toString('utf8');
+            const { charName, manager } = JSON.parse(invitationData);
+
+            const userData = Buffer.from(code, 'hex').toString('utf8');
+            const { displayName, lineID, pictureURL, token } = JSON.parse(userData);
+            const { accessToken, refreshToken } = token;
 
             if (!charName || !manager) {
                 ctx.status = 400;
@@ -59,7 +64,7 @@ router.post('/register', async (ctx, next) => {
                 return;
             }
 
-            if (!displayName || !lineID) {
+            if (!displayName || !lineID || !accessToken || !refreshToken) {
                 ctx.status = 400;
                 ctx.body = '無法取得 LINE 用戶資訊';
                 return;
@@ -67,6 +72,10 @@ router.post('/register', async (ctx, next) => {
 
             // Parse the character data.
             const character = await getCharData(charName);
+
+            // Encode LINE token.
+            const data = JSON.stringify(token);
+            const encodedToken = Buffer.from(data, 'utf8').toString('hex');
 
             // Add user into storage.
             const errorHandler = (error: any) => console.warn(error);
@@ -80,6 +89,11 @@ router.post('/register', async (ctx, next) => {
                 pictureURL,
                 avatarURL: character && character.avatarURL,
                 job: character && character.job,
+            }, {
+                lineID,
+                displayName,
+                pictureURL,
+                encodedToken,
             }, errorHandler);
 
             return ctx.redirect('/users');

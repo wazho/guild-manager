@@ -26,7 +26,8 @@
     "passport": "^0.4.0",
     "passport-line": "0.0.4",
     "pug": "^2.0.3",
-    "qs": "^6.5.2"
+    "qs": "^6.5.2",
+    "rxjs": "^6.3.3"
   },
   "devDependencies": {
     "@types/html-minifier": "^3.5.2",
