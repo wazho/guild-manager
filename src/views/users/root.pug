@@ -79,7 +79,7 @@ block style
             font-size: 1.25em;
             letter-spacing: .1em;
         }
-        .character-job {
+        .character-joblevel {
             font-size: .95em;
         }
         .character-level {
@@ -97,15 +97,18 @@ block style
         .user-name {
             margin-left: .5em;
         }
+        .hidden {
+            display: none;
+        }
 
 block content
     div.uk-container
         nav.uk-navbar-container(uk-sticky='bottom: #offset', uk-navbar)
             div.uk-navbar-left
                 div.uk-navbar-item
-                    form.uk-search.uk-search-navbar.uk-width-1-1
+                    div.uk-search.uk-search-navbar.uk-width-1-1
                         span(uk-search-icon)
-                        input.uk-search-input(type='search', placeholder='查 ID 或 LINE')
+                        input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)')
         div.cards
             each member in members
                 div.profile-card
@@ -123,13 +126,15 @@ block content
                     div.profile-content
                         div.character-name
                             | #{member.charName}
-                        div.character-job
+                        div.character-joblevel
                             if member.job
-                                | #{member.job}
+                                span.character-job
+                                    | #{member.job}
                                 span.character-level
                                     | (Lv.250)
                             else
-                                | 未知
+                                span.character-job
+                                    | 未知
                     div.footer
                         img.uk-border-pill(
                             width='35', height='35', ondragstart='return false;',
@@ -137,3 +142,18 @@ block content
                         )
                         div.user-name
                             | #{member.displayName}
+    script.
+        function filtering(e) {
+            const value = String(e.value).toLowerCase();
+            const cards = document.querySelectorAll('.profile-card');
+
+            Array.prototype.forEach.call(cards, (card) => {
+                const text1 = card.querySelector('.character-name').textContent.toLowerCase();
+                const text2 = card.querySelector('.user-name').textContent.toLowerCase();
+                const text3 = card.querySelector('.character-job').textContent.toLowerCase();
+
+                (text1.includes(value) || text2.includes(value) || text3.includes(value))
+                    ? card.classList.remove('hidden')
+                    : card.classList.add('hidden');
+            });
+        }
