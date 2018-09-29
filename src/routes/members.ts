@@ -2,7 +2,7 @@
 import * as Router from 'koa-router';
 import { parse } from 'qs';
 // Local modules.
-import { findUser, getUsers, addUser } from '../libs/google-apis';
+import { findMember, getMembersData, addMember } from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
 
@@ -10,15 +10,15 @@ const router = new Router();
 
 router.get('/', async (ctx, next) => {
     const { user } = ctx.state;
-    const remoteUser = await findUser(user && user.lineID);
+    const remoteUser = await findMember(user && user.lineID);
 
     if (remoteUser) {
         const legalLevels = ['公會長', '副會長', '會員'];
 
         if (legalLevels.includes(remoteUser.status)) {
-            const users = await getUsers();
+            const { members, lastUpdated } = await getMembersData();
             const path = './src/views/users/root.pug';
-            const html = renderHtml(path, { users });
+            const html = renderHtml(path, { members, lastUpdated });
             ctx.body = html;
         } else {
             ctx.redirect('/');
@@ -80,7 +80,7 @@ router.post('/register', async (ctx, next) => {
             // Add user into storage.
             const errorHandler = (error: any) => console.warn(error);
 
-            await addUser({
+            await addMember({
                 charName,
                 displayName,
                 status: '會員',

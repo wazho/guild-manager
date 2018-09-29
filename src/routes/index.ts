@@ -4,7 +4,7 @@ import * as Router from 'koa-router';
 import { router as systemRouter } from './system';
 import { router as adminRouter } from './admin';
 import { router as loginRouter } from './login';
-import { router as usersRouter } from './users';
+import { router as membersRouter } from './members';
 import { renderHtml } from '../libs/render-html';
 
 const indexRouter = new Router();
@@ -25,6 +25,6 @@ router
     .use('/system', systemRouter.routes(), systemRouter.allowedMethods())
     .use('/admin', adminRouter.routes(), adminRouter.allowedMethods())
     .use(loginRouter.routes(), loginRouter.allowedMethods())
-    .use('/users', usersRouter.routes(), usersRouter.allowedMethods());
+    .use('/members', membersRouter.routes(), membersRouter.allowedMethods());
 
 export default router;

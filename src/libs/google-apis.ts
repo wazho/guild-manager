@@ -2,16 +2,13 @@
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { google } from 'googleapis';
+import { async } from 'rxjs/internal/scheduler/async';
 // Local modules.
 import { googleApis } from '../config';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
-
-// Load client secrets from a local file.
-const content = fs.readFileSync('./credentials.json', { encoding: 'utf-8' });
-const credentials = JSON.parse(content);
 
 // Authorize a client with credentials, then call the Google Sheets API.
 interface IProfile {
@@ -97,7 +94,7 @@ function _generateToken(code: string) {
     });
 }
 
-async function _getUsers() {
+async function _getMembers() {
     const sheets = google.sheets({
         version: 'v4',
         auth: googleApis.apiKey,
@@ -112,7 +109,7 @@ async function _getUsers() {
         });
 
         const rows: string[][] = res.data.values;
-        const users: IProfile[] = rows.map((row) => ({
+        const members: IProfile[] = rows.map((row) => ({
             charName: row[0],
             displayName: row[1],
             status: row[2] as any,
@@ -125,24 +122,24 @@ async function _getUsers() {
             lastUpdated: row[9],
         }));
 
-        return users;
+        return members;
     } catch (err) {
         return [];
     }
 }
 
-async function _addUser(profile: IProfile, social: ISocialData, callback: any, auth: any) {
+async function _addMember(profile: IProfile, social: ISocialData, callback: any, auth: any) {
     const sheets = google.sheets({
         version: 'v4',
         auth,
     });
 
-    // Avoid duplicate user be added.
-    const users = await _getUsers();
-    const found = users.find((user) => user.lineID === profile.lineID);
+    // Avoid duplicate member be added.
+    const members = await _getMembers();
+    const found = members.find((member) => member.lineID === profile.lineID);
 
     if (found) {
-        return callback('ERR_USER_ALREADY_EXIST');
+        return callback('ERR_MEMBER_ALREADY_EXIST');
     }
 
     const appendValues = promisify(sheets.spreadsheets.values.append);
@@ -287,6 +284,31 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
     }
 }
 
+/**
+ * Schedules for updating data.
+ */
+
+// Load client secrets from a local file.
+const content = fs.readFileSync('./credentials.json', { encoding: 'utf-8' });
+const credentials = JSON.parse(content);
+
+// Refresh member data automatically.
+let membersData: { members: IProfile[], lastUpdated: string };
+async function taskRefreshMembersData(this: any) {
+    membersData = {
+        members: await _getMembers(),
+        lastUpdated: (new Date).toLocaleString(),
+    };
+    console.log(`Auto refresh members data.`);
+    // Next task
+    this.schedule(undefined, 60000);
+}
+async.schedule(taskRefreshMembersData, 0);
+
+/**
+ * Export values or functions.
+ */
+
 export const initialize = (errorHandler: any) =>
     authorize(credentials, () => null)
         .catch((e) => _initialize(credentials, errorHandler));
@@ -295,20 +317,19 @@ export const generateToken = async (code: string) =>
     authorize(credentials, () => null)
         .catch((e) => _generateToken(code));
 
-export const addUser = (profile: IProfile, social: ISocialData, errorHandler: any) =>
-    authorize(credentials, _addUser.bind(null, profile, social, errorHandler))
+export const addMember = (profile: IProfile, social: ISocialData, errorHandler: any) =>
+    authorize(credentials, _addMember.bind(null, profile, social, errorHandler))
         .catch(errorHandler);
 
 export const updateLineProfile = (rowNum: number, social: ISocialData, errorHandler: any) =>
     authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
         .catch(errorHandler);
 
-export const getUsers = _getUsers;
+export const getMembersData = () => membersData;
 
 export const getLineProfiles = _getLineProfiles;
 
-export const findUser = async (lineID: string) => {
-    const users = await _getUsers();
-    const found = users.find((user) => user.lineID === lineID);
+export const findMember = async (lineID: string) => {
+    const found = membersData.members.find((member) => member.lineID === lineID);
     return found;
 };

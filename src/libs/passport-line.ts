@@ -2,7 +2,7 @@
 import * as passport from 'koa-passport';
 import { Strategy as LineStrategy } from 'passport-line';
 // Local modules.
-import { findUser } from './google-apis';
+import { findMember } from './google-apis';
 import { lineChannel } from '../config';
 
 passport.serializeUser((user: any, done) => {
@@ -10,7 +10,7 @@ passport.serializeUser((user: any, done) => {
 });
 
 passport.deserializeUser(async (id: string, done) => {
-    const user = await findUser(id) || {};
+    const user = await findMember(id) || {};
     done(null, user);
 });
 

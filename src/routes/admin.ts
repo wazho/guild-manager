@@ -2,14 +2,14 @@
 import * as Router from 'koa-router';
 // Local modules.
 import { webAppURL } from '../config';
-import { findUser } from '../libs/google-apis';
+import { findMember } from '../libs/google-apis';
 import { renderHtml } from '../libs/render-html';
 
 const router = new Router();
 
 async function levelIdentify(ctx: Router.IRouterContext, callback: any) {
     const { user } = ctx.state;
-    const remoteUser = await findUser(user && user.lineID);
+    const remoteUser = await findMember(user && user.lineID);
 
     if (remoteUser) {
         const legalLevels = ['公會長', '副會長'];
