@@ -11,11 +11,15 @@ import { generateMinimumFont } from './font-minimize';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
 
+export enum MemberStatus {
+    公會長 = 1, 副會長, 會員, 離會會員,
+}
+
 // Authorize a client with credentials, then call the Google Sheets API.
 interface IProfile {
     charName: string;
     displayName: string;
-    status: '公會長' | '副會長' | '會員' | '離會會員';
+    status: MemberStatus;
     manager: string;
     lineID: string;
     pictureURL: string;
@@ -113,7 +117,7 @@ async function _getMembers() {
         const members: IProfile[] = rows.map((row) => ({
             charName: row[0],
             displayName: row[1],
-            status: row[2] as any,
+            status: MemberStatus[row[2] as any] as any,
             manager: row[3],
             lineID: row[4],
             pictureURL: row[5],
@@ -296,8 +300,22 @@ const credentials = JSON.parse(content);
 // Refresh member data automatically.
 let membersData: { members: IProfile[], lastUpdated: string };
 async function taskRefreshMembersData(this: any) {
+    // const statusToValue = (status: string) => {
+    //     switch (status) {
+    //         case '公會長':
+    //             return 1;
+    //         case '副會長':
+    //             return 2;
+    //         case '會員':
+    //             return 3;
+    //         case '離會會員':
+    //             return 4;
+    //         default:
+    //             return 5;
+    //     }
+    // };
     membersData = {
-        members: await _getMembers(),
+        members: (await _getMembers()).sort((a, b) => a.status - b.status),
         lastUpdated: (new Date).toLocaleString(),
     };
     // Generate font.

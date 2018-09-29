@@ -113,7 +113,15 @@ block content
             each member in members
                 div.profile-card
                     div.header
-                        span.status #{member.status}
+                        span.status
+                            if member.status === 1
+                                | 公會長
+                            else if member.status === 2
+                                | 副會長
+                            else if member.status === 3
+                                | 會員
+                            else if member.status === 4
+                                | 離會會員
                     div.content-1
                         div.avatar-picture
                             img.avatar.uk-border-rounded(

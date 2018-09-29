@@ -2,7 +2,7 @@
 import * as Router from 'koa-router';
 import { parse } from 'qs';
 // Local modules.
-import { findMember, getMembersData, addMember } from '../libs/google-apis';
+import { findMember, getMembersData, addMember, MemberStatus } from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
 
@@ -13,7 +13,7 @@ router.get('/', async (ctx, next) => {
     const remoteUser = await findMember(user && user.lineID);
 
     if (remoteUser) {
-        const legalLevels = ['公會長', '副會長', '會員'];
+        const legalLevels = [MemberStatus.公會長, MemberStatus.副會長, MemberStatus.會員];
 
         if (legalLevels.includes(remoteUser.status)) {
             const { members, lastUpdated } = await getMembersData();
@@ -83,7 +83,7 @@ router.post('/register', async (ctx, next) => {
             await addMember({
                 charName,
                 displayName,
-                status: '會員',
+                status: MemberStatus.會員,
                 manager,
                 lineID,
                 pictureURL,
