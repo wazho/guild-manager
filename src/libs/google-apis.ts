@@ -300,22 +300,10 @@ const credentials = JSON.parse(content);
 // Refresh member data automatically.
 let membersData: { members: IProfile[], lastUpdated: string };
 async function taskRefreshMembersData(this: any) {
-    // const statusToValue = (status: string) => {
-    //     switch (status) {
-    //         case '公會長':
-    //             return 1;
-    //         case '副會長':
-    //             return 2;
-    //         case '會員':
-    //             return 3;
-    //         case '離會會員':
-    //             return 4;
-    //         default:
-    //             return 5;
-    //     }
-    // };
     membersData = {
-        members: (await _getMembers()).sort((a, b) => a.status - b.status),
+        members: (await _getMembers())
+            .sort((a, b) => a.status - b.status)
+            .filter((o) => o.status <= MemberStatus.會員),
         lastUpdated: (new Date).toLocaleString(),
     };
     // Generate font.
