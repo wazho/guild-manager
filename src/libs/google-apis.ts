@@ -5,6 +5,7 @@ import { google } from 'googleapis';
 import { async } from 'rxjs/internal/scheduler/async';
 // Local modules.
 import { googleApis } from '../config';
+import { generateMinimumFont } from './font-minimize';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -299,9 +300,11 @@ async function taskRefreshMembersData(this: any) {
         members: await _getMembers(),
         lastUpdated: (new Date).toLocaleString(),
     };
-    console.log(`Auto refresh members data.`);
+    // Generate font.
+    generateMinimumFont(JSON.stringify(membersData));
     // Next task
     this.schedule(undefined, 60000);
+    console.log(`Auto refreshed members data and generated minimum font.`);
 }
 async.schedule(taskRefreshMembersData, 0);
 

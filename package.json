@@ -13,6 +13,7 @@
   "author": "Ze-Hao Wang (Salmon)",
   "license": "ISC",
   "dependencies": {
+    "fontmin": "^0.9.7-beta",
     "googleapis": "^27.0.0",
     "html-minifier": "^3.5.20",
     "koa": "^2.5.3",
@@ -27,6 +28,7 @@
     "passport-line": "0.0.4",
     "pug": "^2.0.3",
     "qs": "^6.5.2",
+    "recursive-readdir": "^2.2.2",
     "rxjs": "^6.3.3"
   },
   "devDependencies": {
@@ -43,6 +45,7 @@
     "@types/passport": "^0.4.6",
     "@types/pug": "^2.0.4",
     "@types/qs": "^6.5.1",
+    "@types/recursive-readdir": "^2.2.0",
     "typescript": "^3.0.3"
   }
 }

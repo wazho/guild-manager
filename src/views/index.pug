@@ -31,7 +31,7 @@ block content
                 if ['公會長', '副會長', '會員'].includes(user.status)
                     a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/members')
                         | 查閱會員列表
-                else
+                if ['離會會員'].includes(user.status)
                     button.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(disabled)
                         | 查閱會員列表
                 a.uk-button.uk-button-danger.uk-width-1-1(href='/logout')

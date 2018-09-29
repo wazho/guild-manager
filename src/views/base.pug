@@ -16,9 +16,14 @@ html(lang='en')
         script(src='/uikit/js/uikit-icons.min.js')
 
         style(type='text/css').
+            @font-face {
+                font-family: 'KaiGenGothicTC';
+                src: url('/assets/fonts/KaiGenGothicTC-Normal.ttf') format('truetype');
+            }
             html, body {
                 height: 100%;
                 overflow: hidden;
+                font-family: 'KaiGenGothicTC', Arial, sans-serif !important;
             }
 
         block style
