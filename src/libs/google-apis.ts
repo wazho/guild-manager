@@ -330,6 +330,9 @@ export const getMembersData = () => membersData;
 export const getLineProfiles = _getLineProfiles;
 
 export const findMember = async (lineID: string) => {
-    const found = membersData.members.find((member) => member.lineID === lineID);
-    return found;
+    if (membersData && membersData.members) {
+        const found = membersData.members.find((member) => member.lineID === lineID);
+        return found;
+    }
+    return undefined;
 };

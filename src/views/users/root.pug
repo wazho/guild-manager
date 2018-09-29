@@ -5,10 +5,18 @@ block title
 block style
     style(type='text/css').
         html, body {
-            overflow: scroll;
+            overflow-y: scroll;
+            background: rgba(0, 0, 0, 0) url('/assets/images/members-bg.png') repeat scroll 0% 0%;
         }
 
     style(type='text/css').
+        img {
+            -webkit-user-select: none;
+             -khtml-user-select: none;
+               -moz-user-select: none;
+                 -o-user-select: none;
+                    user-select: none;
+        }
         .cards {
             display: flex;
             flex-wrap: wrap;
@@ -16,53 +24,75 @@ block style
         }
         .profile-card {
             width: 100%;
-            min-width: 150px;
-            max-width: 250px;
-            margin: 10px;
+            min-width: 250px;
+            max-width: 300px;
+            margin: 40px 10px;
             text-align: center;
-            border-radius: 5px;
             overflow: hidden;
+            background: rgba(0, 0, 0, 0) url('/assets/images/card-bg.png') repeat scroll 0% 0%
         }
         .profile-card .header {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            background: rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/circles-light.png") repeat scroll 0% 0%;
             padding: .5em 1em;
         }
-        
         .profile-card .header .status {
-            margin-right:auto;
+            margin-right: auto;
         }
-        .profile-card .header img.group-icon {
-            margin-left: .25em;
-        }
-        .avatar-picture {
+        .profile-card .content-1 {
+            position: relative;
             width: 100%;
-            height: 100px;
-            margin-top: 1em;
+            height: 150px;
         }
-        .avatar-picture img.avatar {
+        .profile-card .content-1 .avatar-picture {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0) url('/assets/class_bg/explorer.png') no-repeat;
+            background-size: cover;
+        }
+        .profile-card .content-1 .avatar-picture img.avatar {
             width: 100px;
             height: 100px;
+            margin-bottom: 5px;
+            -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .9));
+        }
+        .profile-card .content-1 .groups {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .75);
+        }
+        .profile-card .content-1 .groups img.group-icon {
+            margin: .15em;
+            border: 1px solid rgba(175, 175, 175, .75);
         }
         .profile-content {
-            padding: .3em 1em 1em 1em;
+            padding: .5em 1em;
         }
-        .avatar-name {
-            font-size: 1.5em;
+        .character-name {
+            font-size: 1.25em;
             letter-spacing: .1em;
+        }
+        .character-job {
+            font-size: .95em;
+        }
+        .character-level {
+            font-size: .85em;
+            margin-left: .25em;
         }
         .profile-card .footer {
             display: flex;
             align-items: center;
-            background: rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/circles-light.png") repeat scroll 0% 0%;
             padding: .5em 1em;
         }
         .user-picture {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            border: 1px solid #FFF;
         }
         .user-name {
             margin-left: .5em;
@@ -75,26 +105,35 @@ block content
                 div.uk-navbar-item
                     form.uk-search.uk-search-navbar.uk-width-1-1
                         span(uk-search-icon)
-                        input.uk-search-input(type='search', placeholder='查查 ID 或 LINE')
+                        input.uk-search-input(type='search', placeholder='查 ID 或 LINE')
         div.cards
             each member in members
-                div.profile-card(
-                    style={
-                        'background': 'rgba(0, 0, 0, 0) url("https://www.toptal.com/designers/subtlepatterns/patterns/leaves.png") repeat scroll 0% 0%',
-                    }
-                )
+                div.profile-card
                     div.header
                         span.status #{member.status}
-                        img.group-icon.uk-border-pill(uk-tooltip= '困難露希妲 - 1 團', src= '/assets/bosses/lucid-hard.png', width='25', height='25')
-                        img.group-icon.uk-border-pill(uk-tooltip= '困難威爾 - 1 團', src= '/assets/bosses/will-hard.png', width='25', height='25')
-                    div.avatar-picture
-                        if member.avatarURL
-                            img.avatar.uk-border-rounded(src= member.avatarURL, width='200', height='200')
+                    div.content-1
+                        div.avatar-picture
+                            img.avatar.uk-border-rounded(
+                                ondragstart='return false;',
+                                src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
+                            )
+                        div.groups
+                            img.group-icon.uk-border-pill(uk-tooltip='title: 困難露希妲 - 1 團; pos: left', src='/assets/bosses/lucid-hard.png', width='25', height='25', ondragstart='return false;')
+                            img.group-icon.uk-border-pill(uk-tooltip='title: 困難威爾 - 1 團; pos: left', src='/assets/bosses/will-hard.png', width='25', height='25', ondragstart='return false;')
                     div.profile-content
-                        div.avatar-name
+                        div.character-name
                             | #{member.charName}
-                        div #{member.job || '未知'}
+                        div.character-job
+                            if member.job
+                                | #{member.job}
+                                span.character-level
+                                    | (Lv.250)
+                            else
+                                | 未知
                     div.footer
-                        img.uk-border-pill(src= member.pictureURL, width='35', height='35')
+                        img.uk-border-pill(
+                            width='35', height='35', ondragstart='return false;',
+                            src= member.pictureURL, onerror='this.src="/assets/images/default-picture.png"'
+                        )
                         div.user-name
                             | #{member.displayName}
