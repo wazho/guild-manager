@@ -34,6 +34,7 @@ interface ISocialData {
     encodedToken: string;
     firstCreated?: string;
     lastUpdated?: string;
+    failCount?: number;
 }
 
 /**
@@ -214,7 +215,7 @@ async function _getLineProfiles() {
     try {
         const res = await getValues({
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.lineProfileSheetName}!A2:F`,
+            range: `${googleApis.lineProfileSheetName}!A2:G`,
         });
 
         const rows: string[][] = res.data.values;
@@ -225,6 +226,7 @@ async function _getLineProfiles() {
             encodedToken: row[3],
             firstCreated: row[4],
             lastUpdated: row[5],
+            failCount: parseInt(row[6]),
         }));
 
         return socialDatas;
@@ -239,61 +241,49 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
         auth,
     });
 
-    const updateValues = promisify(sheets.spreadsheets.values.update);
+    const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
 
     try {
-        // Update sheet line_profiles.
-        const res = await updateValues({
+        // Update sheet 'line_profiles' and 'members'.
+        const res = await batchUpdate({
             auth,
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.lineProfileSheetName}!A${rowNum}:F`,
-            includeValuesInResponse: false,
-            responseDateTimeRenderOption: 'FORMATTED_STRING',
-            responseValueRenderOption: 'UNFORMATTED_VALUE',
-            valueInputOption: 'RAW',
             resource: {
-                'values': [
-                    [
-                        undefined,           // LINE ID, won't replace. 
-                        social.displayName,
-                        social.pictureURL,
-                        undefined,           // Encoded token.
-                        undefined,           // First create time.
-                        (new Date).toLocaleString(), // Last update time.
-                    ]
-                ]
-            },
-        });
-
-        // Update sheet members.
-        const res2 = await updateValues({
-            auth,
-            spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.memberSheetName}!B${rowNum}:J`,
-            includeValuesInResponse: false,
-            responseDateTimeRenderOption: 'FORMATTED_STRING',
-            responseValueRenderOption: 'UNFORMATTED_VALUE',
-            valueInputOption: 'RAW',
-            resource: {
-                'values': [
-                    [
-                        social.displayName,
-                        undefined,           // Status.
-                        undefined,           // Manager.
-                        undefined,           // LINE ID.
-                        social.pictureURL,
-                        undefined,           // Avatar URL.
-                        undefined,           // Job of character.
-                        undefined,           // First create time.
-                        (new Date).toLocaleString(), // Last update time.
-                    ]
-                ]
+                valueInputOption: 'RAW',
+                data: [
+                    {
+                        range: `${googleApis.lineProfileSheetName}!A${rowNum}:G`,
+                        values: [[
+                            undefined,                   // LINE ID, won't replace. 
+                            social.displayName,
+                            social.pictureURL,
+                            undefined,                   // Encoded token.
+                            undefined,                   // First create time.
+                            (new Date).toLocaleString(), // Last update time.
+                            social.failCount,            // Count of failure.
+                        ]],
+                    },
+                    {
+                        range: `${googleApis.memberSheetName}!B${rowNum}:J`,
+                        values: [[
+                            social.displayName,
+                            undefined,                   // Status.
+                            undefined,                   // Manager.
+                            undefined,                   // LINE ID.
+                            social.pictureURL,
+                            undefined,                   // Avatar URL.
+                            undefined,                   // Job of character.
+                            undefined,                   // First create time.
+                            (new Date).toLocaleString(), // Last update time.
+                        ]],
+                    },
+                ],
             },
         });
 
         return callback(null);
     } catch (err) {
-        return callback('ERR_UPDATE_VALUES');
+        return callback('ERR_UPDATE_VALUES', err.errors);
     }
 }
 
