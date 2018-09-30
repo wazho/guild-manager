@@ -19,6 +19,8 @@ router.get('/auth/line', passport.authenticate('line'));
 router.get('/auth/line/callback', async (ctx, next) => {
     await passport.authenticate('line', async (err, lineProfile, token) => {
         if (!err && lineProfile) {
+            console.log(`Someone logged-in by LINE (${lineProfile.displayName}, ${lineProfile.id}).`);
+
             const user = await findMember(lineProfile.id);
 
             // Is member already.

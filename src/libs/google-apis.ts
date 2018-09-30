@@ -318,10 +318,10 @@ async function taskRefreshMembersData(this: any) {
     generateMinimumFont(JSON.stringify(membersData));
     if (this) {
         // Next task.
-        this.schedule(undefined, 60000);
-        console.log(`Auto refreshed members data and generated minimized font.`);
+        this.schedule(undefined, 30000);
+        console.log(`[Member data] Auto refreshed. Loaded ${membersData.members.length} members.`);
     } else {
-        console.log(`Refreshed members data and generated minimized font.`);
+        console.log(`[Member data] Refreshed. Loaded ${membersData.members.length} members.`);
     }
 }
 async.schedule(taskRefreshMembersData, 0);
