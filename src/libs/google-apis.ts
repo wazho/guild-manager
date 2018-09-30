@@ -132,6 +132,7 @@ async function _getMembers() {
 
         return members;
     } catch (err) {
+        console.warn(`ERR_LOAD_MEMBERS_DATA`, err);
         return [];
     }
 }
