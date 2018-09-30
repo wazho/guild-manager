@@ -25,6 +25,7 @@ interface IProfile {
     pictureURL: string;
     avatarURL?: string;
     job?: string;
+    groups?: string | string[][];
     firstCreated?: string;
     lastUpdated?: string;
 }
@@ -111,7 +112,7 @@ async function _getMembers() {
     try {
         const res = await getValues({
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.memberSheetName}!A2:J`,
+            range: `${googleApis.memberSheetName}!A2:K`,
         });
 
         const rows: string[][] = res.data.values;
@@ -124,8 +125,9 @@ async function _getMembers() {
             pictureURL: row[5],
             avatarURL: row[6],
             job: row[7],
-            firstCreated: row[8],
-            lastUpdated: row[9],
+            groups: row[8].split(',').filter(Boolean).map((o) => o.split('-')),
+            firstCreated: row[9],
+            lastUpdated: row[10],
         }));
 
         return members;
@@ -171,6 +173,7 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         profile.pictureURL,
                         profile.avatarURL,
                         profile.job,
+                        undefined,
                         (new Date).toLocaleString(),
                         (new Date).toLocaleString(),
                     ]
@@ -196,24 +199,6 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         social.encodedToken,
                         (new Date).toLocaleString(),
                         (new Date).toLocaleString(),
-                    ]
-                ]
-            },
-        });
-
-        const res3 = await appendValues({
-            auth,
-            spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.groupSheetName}!A2`,
-            includeValuesInResponse: false,
-            insertDataOption: 'INSERT_ROWS',
-            responseDateTimeRenderOption: 'FORMATTED_STRING',
-            responseValueRenderOption: 'UNFORMATTED_VALUE',
-            valueInputOption: 'RAW',
-            resource: {
-                'values': [
-                    [
-                        profile.charName,
                     ]
                 ]
             },
@@ -285,6 +270,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             social.pictureURL,
                             undefined,                   // Avatar URL.
                             undefined,                   // Job of character.
+                            undefined,                   // Groups.
                             undefined,                   // First create time.
                             (new Date).toLocaleString(), // Last update time.
                         ]],

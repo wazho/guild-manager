@@ -132,9 +132,14 @@ block content
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                             )
-                        div.groups
-                            img.group-icon.uk-border-pill(uk-tooltip='title: 困難露希妲 - 1 團; pos: left', src='/assets/bosses/lucid-hard.png', width='25', height='25', ondragstart='return false;')
-                            img.group-icon.uk-border-pill(uk-tooltip='title: 困難威爾 - 1 團; pos: left', src='/assets/bosses/will-hard.png', width='25', height='25', ondragstart='return false;')
+                        if member.groups.length
+                            div.groups
+                                each group in member.groups
+                                    img.group-icon.uk-border-pill(
+                                        width='25', height='25', ondragstart='return false;',
+                                        uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: left`,
+                                        src= `/assets/bosses/${group[0]}.png`
+                                    )
                     div.profile-content
                         div.character-name
                             | #{member.charName}
