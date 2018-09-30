@@ -87,6 +87,8 @@ router.post('/register', async (ctx, next) => {
                 pictureURL,
                 avatarURL: character && character.avatarURL,
                 job: character && character.job,
+                level: character && parseInt(character.level),
+                unionLevel: character && parseInt(character.unionLevel),
             }, {
                 lineID,
                 displayName,

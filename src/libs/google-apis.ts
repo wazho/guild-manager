@@ -25,6 +25,8 @@ interface IProfile {
     pictureURL: string;
     avatarURL?: string;
     job?: string;
+    level?: number;
+    unionLevel?: number;
     groups?: string | string[][];
     firstCreated?: string;
     lastUpdated?: string;
@@ -112,7 +114,7 @@ async function _getMembers() {
     try {
         const res = await getValues({
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.memberSheetName}!A2:K`,
+            range: `${googleApis.memberSheetName}!A2:M`,
         });
 
         const rows: string[][] = res.data.values;
@@ -125,9 +127,11 @@ async function _getMembers() {
             pictureURL: row[5],
             avatarURL: row[6],
             job: row[7],
-            groups: row[8].split(',').filter(Boolean).map((o) => o.split('-')),
-            firstCreated: row[9],
-            lastUpdated: row[10],
+            level: parseInt(row[8]),
+            unionLevel: parseInt(row[9]),
+            groups: row[10].split(',').filter(Boolean).map((o) => o.split('-')),
+            firstCreated: row[11],
+            lastUpdated: row[12],
         }));
 
         return members;
@@ -174,7 +178,9 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         profile.pictureURL,
                         profile.avatarURL,
                         profile.job,
-                        undefined,
+                        profile.level,
+                        profile.unionLevel,
+                        undefined, // Empty groups.
                         (new Date).toLocaleString(),
                         (new Date).toLocaleString(),
                     ]
@@ -271,6 +277,8 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             social.pictureURL,
                             undefined,                   // Avatar URL.
                             undefined,                   // Job of character.
+                            undefined,                   // Level of character.
+                            undefined,                   // Union level of character.
                             undefined,                   // Groups.
                             undefined,                   // First create time.
                             (new Date).toLocaleString(), // Last update time.
