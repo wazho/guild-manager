@@ -78,8 +78,6 @@ router.post('/register', async (ctx, next) => {
             const encodedToken = Buffer.from(data, 'utf8').toString('hex');
 
             // Add user into storage.
-            const errorHandler = (error: any) => console.warn(error);
-
             await addMember({
                 charName,
                 displayName,
@@ -94,9 +92,13 @@ router.post('/register', async (ctx, next) => {
                 displayName,
                 pictureURL,
                 encodedToken,
-            }, errorHandler);
+            }, async (error: any) => {
+                if (!error) {
+                    await ctx.logIn({ id: lineID });
+                }
+            });
 
-            return ctx.redirect('/users');
+            return ctx.redirect('/');
         }
     } catch (error) {
         return ctx.redirect('/');

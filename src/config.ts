@@ -30,4 +30,5 @@ export const googleApis = {
     spreadsheetId: process.env.GOOGLE_APIS_SPREADSHEET_ID,
     memberSheetName: process.env.GOOGLE_APIS_MEMBERS_SHEET_NAME,
     lineProfileSheetName: process.env.GOOGLE_APIS_LINE_PROFILES_SHEET_NAME,
+    groupSheetName: process.env.GOOGLE_APIS_GROUPS_SHEET_NAME,
 };

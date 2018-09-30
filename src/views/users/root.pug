@@ -97,6 +97,10 @@ block style
         .user-name {
             margin-left: .5em;
         }
+        .footer {
+            text-align: center;
+            padding: 2em 0 .5em 0;
+        }
         .hidden {
             display: none;
         }
@@ -150,6 +154,11 @@ block content
                         )
                         div.user-name
                             | #{member.displayName}
+        div.footer
+            | Managed and designed by 
+            a.uk-link-text(href='http://salmon.tw', target='_blank', uk-tooltip='title: go to my site\: salmon.tw')
+                | Salmon
+
     script.
         function filtering(e) {
             const value = String(e.value).toLowerCase();
