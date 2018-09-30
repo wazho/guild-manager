@@ -60,11 +60,34 @@ block style
             margin-bottom: 5px;
             -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .9));
         }
+        .profile-card .content-1 .talks {
+            position: absolute;
+            left: 55%;
+            bottom: 105px;
+            height: 1.5em;
+            max-width: 35%;
+            background: #FFF;
+            padding: .25em .5em;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .profile-card .content-1 .talks .text {
+            width: 100%;
+            overflow: hidden;
+        }
+        .profile-card .content-1 .talks .arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #FFF;
+        }
         .profile-card .content-1 .groups {
             position: absolute;
             width: 30px;
             height: 100%;
-            right: 0;
+            left: 0;
             bottom: 0;
             background: rgba(0, 0, 0, .75);
         }
@@ -72,7 +95,7 @@ block style
             margin: .15em;
             border: 1px solid rgba(175, 175, 175, .75);
         }
-        .profile-content {
+        .content-2 {
             padding: .5em 1em;
         }
         .character-name {
@@ -132,15 +155,20 @@ block content
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                             )
+                        if member.mytalks
+                            div.talks
+                                div.text
+                                    | #{member.mytalks}
+                                div.arrow
                         if member.groups.length
                             div.groups
                                 each group in member.groups
                                     img.group-icon.uk-border-pill(
                                         width='25', height='25', ondragstart='return false;',
-                                        uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: left`,
+                                        uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: right`,
                                         src= `/assets/bosses/${group[0]}.png`
                                     )
-                    div.profile-content
+                    div.content-2
                         div.character-name
                             | #{member.charName}
                         div.character-joblevel
