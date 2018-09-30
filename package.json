@@ -1,6 +1,6 @@
 {
   "name": "maplestory-guide-manager",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The guide management system in MapleStory.",
   "main": "dist/index.js",
   "scripts": {
