@@ -8,11 +8,7 @@ import { renderHtml } from '../libs/render-html';
 
 const router = new Router();
 
-router.get('/login', (ctx, next) => {
-    const path = './src/views/users/disclaimer.pug';
-    const html = renderHtml(path);
-    ctx.body = html;
-});
+router.get('/login', (ctx, next) => ctx.redirect('/auth/line'));
 
 router.get('/logout', (ctx, next) => {
     ctx.logout();
@@ -43,7 +39,7 @@ router.get('/auth/line/callback', async (ctx, next) => {
             });
             const code = Buffer.from(data, 'utf8').toString('hex');
             const querystring = stringify({ code });
-            
+
             return ctx.redirect(`/members/register?${querystring}`);
         }
 

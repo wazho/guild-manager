@@ -1,5 +1,6 @@
 // Node modules.
 import * as Router from 'koa-router';
+import { parse } from 'qs';
 // Local modules.
 import { router as systemRouter } from './system';
 import { router as adminRouter } from './admin';
@@ -10,6 +11,12 @@ import { renderHtml } from '../libs/render-html';
 const indexRouter = new Router();
 
 indexRouter.get('/', (ctx, next) => {
+    const { inviteCode } = parse(ctx.querystring);
+
+    if (inviteCode) {
+        return ctx.redirect(`/members/declaration?inviteCode=${inviteCode}`);
+    }
+
     const { user } = ctx.state;
 
     const path = './src/views/index.pug';

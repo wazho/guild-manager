@@ -26,14 +26,18 @@ block content
     div.uk-section.uk-position-center-left.uk-position-center-right
         div.content.uk-container.uk-container-xsmall
             h1.uk-heading-line.uk-text-center
-                | 網站聲明
+                | 入會邀請與聲明
 
             div.article
+                p 您好，
+                    span.uk-text-primary
+                        | #{charName}
+                    | ，歡迎加入淫小築公會。
                 div.uk-margin
                     p 本網站平台透過 LINE 所授權的「
                         span.uk-text-primary
-                            |個人檔案
-                        | 」資訊 (見下圖)。
+                            | 個人檔案
+                        | 」資訊進行身份驗證 (見下圖)。
                     p 我們
                         span.uk-text-danger
                             | 不會取得額外特殊權限
@@ -44,4 +48,10 @@ block content
 
             a(href='/auth/line')
                 button.uk-button.uk-button-primary.uk-width-1-1.uk-margin-top.uk-margin-bottom
-                    | 透過 LINE 登入
+                    | 登入 LINE 進行註冊
+
+    script.
+        const charName = '#{charName}';
+        const inviteCode = '#{inviteCode}';
+        localStorage.setItem('InvitePlayerName', charName);
+        localStorage.setItem('InviteCode', inviteCode);

@@ -28,6 +28,26 @@ router.get('/', async (ctx, next) => {
     }
 });
 
+router.get('/declaration', (ctx, next) => {
+    try {
+        const { inviteCode } = parse(ctx.querystring);
+        const invitationData = Buffer.from(inviteCode, 'hex').toString('utf8');
+        const { charName, manager } = JSON.parse(invitationData);
+
+        if (!charName || !manager) {
+            ctx.status = 400;
+            ctx.body = '錯誤的邀請碼';
+            return;
+        }
+
+        const path = './src/views/users/declaration.pug';
+        const html = renderHtml(path, { inviteCode, charName, manager });
+        ctx.body = html;
+    } catch (e) {
+        return ctx.redirect('/');
+    }
+});
+
 router.get('/register', (ctx, next) => {
     try {
         // Decode LINE profile.

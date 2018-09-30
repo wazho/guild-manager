@@ -17,10 +17,7 @@ block content
         div.uk-container.uk-container-xsmall
             div.content.uk-margin-medium-bottom.uk-card.uk-card-default.uk-card-body
                 h1.uk-heading-line.uk-text-center
-                    | 輸入邀請碼
-
-                div.uk-margin
-                    | 請聯繫淫小築公會幹部，並通過面試索取邀請碼。
+                    | 入會註冊
 
                 div.uk-margin
                     span.uk-label.uk-margin-small-right
@@ -29,10 +26,16 @@ block content
 
                 form(action='/members/register', method='post')
                     div.uk-margin
+                        label.uk-form-label(for='charName')
+                            | 申請人
+                        div.uk-form-controls
+                            input#charName.uk-input(type='text', readonly)
+
+                    div.uk-margin
                         label.uk-form-label(for='inviteCode')
                             | 邀請代碼
                         div.uk-form-controls
-                            input#inviteCode.uk-input(name='inviteCode', type='text')
+                            input#inviteCode.uk-input(name='inviteCode', type='text', readonly)
 
                     div.uk-margin
                         label.uk-form-label(for='displayName')
@@ -45,3 +48,14 @@ block content
                     input#code(name='code', type='hidden', value= code)
 
                     input.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出')
+
+    script.
+        const charName = localStorage.getItem('InvitePlayerName');
+        const inviteCode = localStorage.getItem('InviteCode');
+
+        if (!charName || !inviteCode) {
+            window.location = '/';
+        } else {
+            document.getElementById('charName').value = charName;
+            document.getElementById('inviteCode').value = inviteCode;
+        }
