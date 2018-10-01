@@ -31,6 +31,7 @@ interface IProfile {
     moodPhrase?: string;
     firstCreated?: string;
     lastUpdated?: string;
+    rowNum?: number;
 }
 
 interface ISocialData {
@@ -321,8 +322,6 @@ async function _updateMoodPhrase(lineID: string, moodPhrase: string, callback: a
     try {
         const found = await findMember(lineID);
         if (found) {
-            const rowNum = 2 + membersData.members.indexOf(found);
-
             // Update sheet 'members' and 'line_profiles'.
             const res = await batchUpdate({
                 auth,
@@ -331,7 +330,7 @@ async function _updateMoodPhrase(lineID: string, moodPhrase: string, callback: a
                     valueInputOption: 'RAW',
                     data: [
                         {
-                            range: `${googleApis.memberSheetName}!L${rowNum}`,
+                            range: `${googleApis.memberSheetName}!L${found.rowNum}`,
                             values: [[ moodPhrase ]],
                         }
                     ],
@@ -358,6 +357,7 @@ let membersData: { members: IProfile[], lastUpdated: string };
 async function taskRefreshMembersData(this: any) {
     membersData = {
         members: (await _getMembers())
+            .map((o, i) => ({ ...o, rowNum: i + 2 })) // 2 is a magic !
             .sort((a, b) => a.status - b.status)
             .filter((o) => o.status <= MemberStatus.會員),
         lastUpdated: (new Date).toLocaleString(),
