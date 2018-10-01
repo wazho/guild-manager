@@ -57,7 +57,7 @@ async function authorize(credentials: any, callback: any) {
         // TODO: avoid locked by sync.
         const token = fs.readFileSync(TOKEN_PATH, { encoding: 'utf-8' });
         oAuth2Client.setCredentials(JSON.parse(token));
-        callback(oAuth2Client);
+        await callback(oAuth2Client);
     } catch (err) {
         throw {
             errorCode: 'ERR_ACCESS_TOKEN_FAIL',
@@ -349,11 +349,11 @@ export const generateToken = async (code: string) =>
 
 export const addMember = async (profile: IProfile, social: ISocialData, errorHandler: any) =>
     await authorize(credentials, _addMember.bind(null, profile, social, errorHandler))
-        .catch(errorHandler);
+        .catch((e) => console.error(e));
 
-export const updateLineProfile = (rowNum: number, social: ISocialData, errorHandler: any) =>
-    authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
-        .catch(errorHandler);
+export const updateLineProfile = async (rowNum: number, social: ISocialData, errorHandler: any) =>
+    await authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
+        .catch((e) => console.error(e));
 
 export const getMembersData = () => membersData;
 
