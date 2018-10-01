@@ -2,7 +2,7 @@
 import * as Router from 'koa-router';
 import { parse } from 'qs';
 // Local modules.
-import { findMember, getMembersData, addMember, MemberStatus } from '../libs/google-apis';
+import { findMember, getMembersData, addMember, MemberStatus, updateMoodPhrase } from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
 
@@ -124,6 +124,31 @@ router.post('/register', async (ctx, next) => {
         }
     } catch (error) {
         return ctx.redirect('/');
+    }
+});
+
+router.post('/mood-phrase', async (ctx, next) => {
+    try {
+        const { user } = ctx.state;
+        const remoteUser = await findMember(user && user.lineID);
+        const body = ctx.request.body;
+
+        if (remoteUser && body) {
+            // Decode inviteCode and code.
+            const { moodPhrase } = body as any;
+
+            await updateMoodPhrase(remoteUser.lineID, moodPhrase, (e: any) => {
+                e && console.warn(e);
+            });
+
+            ctx.status = 200;
+            ctx.message = 'succeeded';
+        } else {
+            throw 'ERR_UPDATE_MOOD_PHRASE';
+        }
+    } catch (error) {
+        ctx.status = 400;
+        ctx.message = 'fail to update mood phrase.';
     }
 });
 

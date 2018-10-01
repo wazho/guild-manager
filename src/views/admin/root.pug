@@ -16,7 +16,7 @@ block content
     div.uk-section.uk-position-center-left.uk-position-center-right
         div.uk-container.uk-container-xsmall
             div.content.uk-margin-medium-bottom.uk-card.uk-card-default.uk-card-body
-                form(action='/admin/invite-code' method='post')
+                form(action='/admin/invite-code', method='post')
                     h2.uk-heading-line.uk-text-center
                         | 邀請碼生成
 
@@ -31,7 +31,7 @@ block content
                         div.uk-form-controls
                             div.uk-inline
                                 span.uk-form-icon(uk-icon='icon: user')
-                                input#manager.uk-input(name='manager' type='text')
+                                input#manager.uk-input(name='manager', type='text')
 
                     div.uk-margin
                         label.uk-form-label(for='player')
@@ -39,7 +39,7 @@ block content
                         div.uk-form-controls
                             div.uk-inline
                                 span.uk-form-icon(uk-icon='icon: user')
-                                input#player.uk-input(name='player' type='text')
+                                input#player.uk-input(name='player', type='text', autocomplete='off')
 
                     input.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出')
 

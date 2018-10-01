@@ -28,6 +28,7 @@ interface IProfile {
     level?: number;
     unionLevel?: number;
     groups?: string | string[][];
+    moodPhrase?: string;
     firstCreated?: string;
     lastUpdated?: string;
 }
@@ -130,8 +131,9 @@ async function _getMembers() {
             level: parseInt(row[8]),
             unionLevel: parseInt(row[9]),
             groups: row[10].split(',').filter(Boolean).map((o) => o.split('-')),
-            firstCreated: row[11],
-            lastUpdated: row[12],
+            moodPhrase: row[11],
+            firstCreated: row[12],
+            lastUpdated: row[123],
         }));
 
         return members;
@@ -181,6 +183,7 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         profile.level,
                         profile.unionLevel,
                         undefined, // Empty groups.
+                        undefined, // Empty mood phrase.
                         (new Date).toLocaleString(),
                         (new Date).toLocaleString(),
                     ]
@@ -268,7 +271,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                 valueInputOption: 'RAW',
                 data: [
                     {
-                        range: `${googleApis.memberSheetName}!B${rowNum}:J`,
+                        range: `${googleApis.memberSheetName}!B${rowNum}:N`,
                         values: [[
                             social.displayName,
                             undefined,                   // Status.
@@ -280,6 +283,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             undefined,                   // Level of character.
                             undefined,                   // Union level of character.
                             undefined,                   // Groups.
+                            undefined,                   // Mood phrase.
                             undefined,                   // First create time.
                             (new Date).toLocaleString(), // Last update time.
                         ]],
@@ -299,6 +303,41 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                 ],
             },
         });
+
+        return callback(null);
+    } catch (err) {
+        return callback('ERR_UPDATE_VALUES', err.errors);
+    }
+}
+
+async function _updateMoodPhrase(lineID: string, moodPhrase: string, callback: any, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth,
+    });
+
+    const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
+
+    try {
+        const found = await findMember(lineID);
+        if (found) {
+            const rowNum = 1 + membersData.members.indexOf(found);
+
+            // Update sheet 'members' and 'line_profiles'.
+            const res = await batchUpdate({
+                auth,
+                spreadsheetId: googleApis.spreadsheetId,
+                resource: {
+                    valueInputOption: 'RAW',
+                    data: [
+                        {
+                            range: `${googleApis.memberSheetName}!L${rowNum}`,
+                            values: [[ moodPhrase ]],
+                        }
+                    ],
+                },
+            });
+        }
 
         return callback(null);
     } catch (err) {
@@ -327,7 +366,7 @@ async function taskRefreshMembersData(this: any) {
     generateMinimumFont(JSON.stringify(membersData));
     if (this) {
         // Next task.
-        this.schedule(undefined, 30000);
+        this.schedule(undefined, 10000);
         console.log(`[Member data] Auto refreshed. Loaded ${membersData.members.length} members.`);
     } else {
         console.log(`[Member data] Refreshed. Loaded ${membersData.members.length} members.`);
@@ -353,6 +392,10 @@ export const addMember = async (profile: IProfile, social: ISocialData, errorHan
 
 export const updateLineProfile = async (rowNum: number, social: ISocialData, errorHandler: any) =>
     await authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
+        .catch((e) => console.error(e));
+
+export const updateMoodPhrase = async (lineID: string, moodPhrase: string, errorHandler: any) =>
+    await authorize(credentials, _updateMoodPhrase.bind(null, lineID, moodPhrase, errorHandler))
         .catch((e) => console.error(e));
 
 export const getMembersData = () => membersData;

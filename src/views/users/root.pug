@@ -60,7 +60,7 @@ block style
             margin-bottom: 5px;
             -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .9));
         }
-        .profile-card .content-1 .talks {
+        .profile-card .content-1 .moodPhrase {
             position: absolute;
             left: 55%;
             bottom: 105px;
@@ -71,11 +71,11 @@ block style
             border-radius: 5px;
             white-space: nowrap;
         }
-        .profile-card .content-1 .talks .text {
+        .profile-card .content-1 .moodPhrase .text {
             width: 100%;
             overflow: hidden;
         }
-        .profile-card .content-1 .talks .arrow {
+        .profile-card .content-1 .moodPhrase .arrow {
             position: absolute;
             width: 0;
             height: 0;
@@ -155,10 +155,10 @@ block content
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                             )
-                        if member.mytalks
-                            div.talks
+                        if member.moodPhrase
+                            div.moodPhrase
                                 div.text
-                                    | #{member.mytalks}
+                                    | #{member.moodPhrase}
                                 div.arrow
                         if member.groups.length
                             div.groups
