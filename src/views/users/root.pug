@@ -60,46 +60,36 @@ block style
             margin-bottom: 5px;
             -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .9));
         }
-        .profile-card .content-1 .moodPhrase {
-            position: absolute;
-            left: 55%;
-            bottom: 105px;
-            height: 1.5em;
-            max-width: 35%;
-            background: #FFF;
-            padding: .25em .5em;
-            border-radius: 5px;
-            white-space: nowrap;
-        }
-        .profile-card .content-1 .moodPhrase .text {
-            width: 100%;
-            overflow: hidden;
-        }
-        .profile-card .content-1 .moodPhrase .arrow {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 15px solid #FFF;
-        }
         .profile-card .content-1 .groups {
             position: absolute;
-            width: 30px;
+            width: 40px;
             height: 100%;
             left: 0;
             bottom: 0;
             background: rgba(0, 0, 0, .75);
         }
         .profile-card .content-1 .groups img.group-icon {
-            margin: .15em;
-            border: 1px solid rgba(175, 175, 175, .75);
+            margin-top: 5px;
+            border: 2px solid rgba(175, 175, 175, .75);
         }
         .content-2 {
-            padding: .5em 1em;
+            padding: .5em;
+        }
+        .content-2 .content-left {
+            width: 30%;
+            border-right: 1px solid #CCC;
+            align-self: center;
+            justify-self: center;
+            padding-right: .5em;
+        }
+        .content-2 .content-right {
+            width: 60%;
+            align-self: center;
+            justify-self: center;
+            padding-left: .5em;
         }
         .character-name {
-            font-size: 1.25em;
+            font-size: 1.15em;
             letter-spacing: .1em;
         }
         .character-joblevel {
@@ -110,19 +100,25 @@ block style
             margin-left: .25em;
         }
         .profile-card .footer {
-            display: flex;
-            align-items: center;
-            padding: .5em 1em;
+            text-align: center;
+            padding: 0 .5em .5em .5em;
         }
         .user-picture {
             border: 1px solid #FFF;
         }
         .user-name {
-            margin-left: .5em;
+            font-size: 0.95em;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
         .footer {
             text-align: center;
             padding: 2em 0 .5em 0;
+        }
+        .footer.default {
+            color: #AAA;
+            font-style: italic;
         }
         .hidden {
             display: none;
@@ -155,38 +151,41 @@ block content
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                             )
-                        if member.moodPhrase
-                            div.moodPhrase
-                                div.text
-                                    | #{member.moodPhrase}
-                                div.arrow
                         if member.groups.length
                             div.groups
                                 each group in member.groups
                                     img.group-icon.uk-border-pill(
-                                        width='25', height='25', ondragstart='return false;',
+                                        width='30', height='30', ondragstart='return false;',
                                         uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: right`,
                                         src= `/assets/bosses/${group[0]}.png`
                                     )
                     div.content-2
-                        div.character-name
-                            | #{member.charName}
-                        div.character-joblevel
-                            if member.job
-                                span.character-job
-                                    | #{member.job}
-                                span.character-level
-                                    | (Lv.#{member.level})
-                            else
-                                span.character-job
-                                    | 未知
-                    div.footer
-                        img.uk-border-pill(
-                            width='35', height='35', ondragstart='return false;',
-                            src= member.pictureURL, onerror='this.src="/assets/images/default-picture.png"'
-                        )
-                        div.user-name
-                            | #{member.displayName}
+                        div.uk-grid-collapse.uk-text-center(uk-grid)
+                            div.content-left
+                                img.uk-border-pill(
+                                    width='35', height='35', ondragstart='return false;',
+                                    src= member.pictureURL, onerror='this.src="/assets/images/default-picture.png"'
+                                )
+                                div.user-name
+                                    | #{member.displayName}
+                            div.content-right
+                                div.character-name
+                                    | #{member.charName}
+                                div.character-joblevel
+                                    if member.job
+                                        span.character-job
+                                            | #{member.job}
+                                        span.character-level
+                                            | (Lv.#{member.level})
+                                    else
+                                        span.character-job
+                                            | 未知
+                    if member.moodPhrase
+                        div.footer
+                            | #{member.moodPhrase}
+                    else
+                        div.footer.default
+                            | 未寫下心情小語
         div.footer
             | Managed and designed by 
             a.uk-link-text(href='http://salmon.tw', target='_blank', uk-tooltip='title: go to my site\: salmon.tw')
