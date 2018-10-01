@@ -53,12 +53,25 @@ block style
             height: 100%;
             background: rgba(0, 0, 0, 0) url('/assets/class_bg/explorer.png') no-repeat;
             background-size: cover;
+            overflow: hidden;
         }
         .profile-card .content-1 .avatar-picture img.avatar {
             width: 100px;
             height: 100px;
             margin-bottom: 5px;
-            -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .9));
+            z-index: 1;
+        }
+        .profile-card .content-1 .avatar-picture img.follower {
+            position: absolute;
+            z-index: 0;
+        }
+        .profile-card .content-1 .avatar-picture img.follower.龍魔導士 {
+            top: -35px;
+            right: -20px;
+        }
+        .profile-card .content-1 .avatar-picture img.follower.狂豹獵人 {
+            bottom: 15px;
+            left: 55px;
         }
         .profile-card .content-1 .groups {
             position: absolute;
@@ -150,6 +163,11 @@ block content
                             img.avatar.uk-border-rounded(
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
+                            )
+                            img.follower(
+                                class=`${member.job}`
+                                ondragstart='return false;',
+                                src=`/assets/class_follower/${member.job}.png`, onerror='this.style.display="none"'
                             )
                         if member.groups.length
                             div.groups
