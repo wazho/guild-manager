@@ -321,7 +321,7 @@ async function _updateMoodPhrase(lineID: string, moodPhrase: string, callback: a
     try {
         const found = await findMember(lineID);
         if (found) {
-            const rowNum = 1 + membersData.members.indexOf(found);
+            const rowNum = 2 + membersData.members.indexOf(found);
 
             // Update sheet 'members' and 'line_profiles'.
             const res = await batchUpdate({
