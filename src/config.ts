@@ -1,5 +1,5 @@
 export const port = process.env.PORT || 3000;
-export const webAppURL = process.env.WEB_APP_URL || `http://localhost:${port}`;
+export const webAppURL = process.env.WEB_APP_URL || `http://localhost:${port}/`;
 
 /**
  * Step 1: Go to LINE developer https://developers.line.me/
