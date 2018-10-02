@@ -6,7 +6,7 @@ import * as configs from '../config';
 
 const renderHtml = (path: string, options?: any) => {
     const env = { ...configs };
-    const rawHtml = renderFile(path, { options, env });
+    const rawHtml = renderFile(path, { ...options, env });
     const html = minify(rawHtml, {
         removeComments: true,
         minifyCSS: true,
