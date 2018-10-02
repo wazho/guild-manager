@@ -26,4 +26,4 @@ app
     .use(router.allowedMethods())
     .listen(port);
 
-console.log(`Web app starting: ${webAppURL}:${port}/.`);
+console.log(`Web app starting: ${webAppURL}/.`);
