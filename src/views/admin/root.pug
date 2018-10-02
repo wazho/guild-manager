@@ -24,6 +24,7 @@ block content
                         span.uk-label.uk-margin-small-right
                             | 請留意
                         | 相同角色名稱生成的邀請碼，只能夠被使用一次。
+                        | 建議直接複製受邀者的角色名稱，以避免輸入錯誤。
 
                     div.uk-margin
                         label.uk-form-label(for='manager')
@@ -31,7 +32,7 @@ block content
                         div.uk-form-controls
                             div.uk-inline
                                 span.uk-form-icon(uk-icon='icon: user')
-                                input#manager.uk-input(name='manager', type='text')
+                                input#manager.uk-input(name='manager', type='text', value= user.charName, readonly)
 
                     div.uk-margin
                         label.uk-form-label(for='player')
@@ -41,8 +42,14 @@ block content
                                 span.uk-form-icon(uk-icon='icon: user')
                                 input#player.uk-input(name='player', type='text', autocomplete='off')
 
-                    input.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出')
+                    input#form-submit.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出', disabled)
 
                 a(href='/')
                     button.uk-button.uk-align-left.uk-margin-remove-bottom
                         | 回首頁
+
+    script.
+        const submitElement = document.getElementById('form-submit');
+        document.getElementById('player').addEventListener('input', (event) => {
+            submitElement.disabled = !event.target.value;
+        });
