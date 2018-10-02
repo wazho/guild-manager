@@ -51,9 +51,58 @@ block style
             justify-content: center;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0) url('/assets/class_bg/explorer.png') no-repeat;
             background-size: cover;
             overflow: hidden;
+        }
+        .profile-card .content-1 .avatar-picture {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.爆拳槍神,
+        .profile-card .content-1 .avatar-picture.煉獄巫師,
+        .profile-card .content-1 .avatar-picture.狂豹獵人,
+        .profile-card .content-1 .avatar-picture.機甲戰神,
+        .profile-card .content-1 .avatar-picture.惡魔殺手,
+        .profile-card .content-1 .avatar-picture.惡魔復仇者,
+        .profile-card .content-1 .avatar-picture.傑諾 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.狂狼勇士,
+        .profile-card .content-1 .avatar-picture.龍魔導士,
+        .profile-card .content-1 .avatar-picture.精靈遊俠,
+        .profile-card .content-1 .avatar-picture.幻影俠盜,
+        .profile-card .content-1 .avatar-picture.夜光,
+        .profile-card .content-1 .avatar-picture.隱月 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.米哈逸,
+        .profile-card .content-1 .avatar-picture.聖魂劍士,
+        .profile-card .content-1 .avatar-picture.烈焰巫師,
+        .profile-card .content-1 .avatar-picture.破風使者,
+        .profile-card .content-1 .avatar-picture.暗夜行者,
+        .profile-card .content-1 .avatar-picture.閃雷悍將 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.凱薩,
+        .profile-card .content-1 .avatar-picture.天使破壞者,
+        .profile-card .content-1 .avatar-picture.卡蒂娜 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.伊利恩,
+        .profile-card .content-1 .avatar-picture.亞克 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.神之子 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.凱內西斯 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.劍豪,
+        .profile-card .content-1 .avatar-picture.陰陽師 {
+            background-image: url('/assets/class_bg/explorer.png');
+        }
+        .profile-card .content-1 .avatar-picture.幻獸師 {
+            background-image: url('/assets/class_bg/explorer.png');
         }
         .profile-card .content-1 .avatar-picture img.avatar {
             width: 100px;
@@ -159,7 +208,7 @@ block content
                             else if member.status === 4
                                 | 離會會員
                     div.content-1
-                        div.avatar-picture
+                        div.avatar-picture(class=`${member.job}`)
                             img.avatar.uk-border-rounded(
                                 ondragstart='return false;',
                                 src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
