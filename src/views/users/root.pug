@@ -17,6 +17,12 @@ block style
                  -o-user-select: none;
                     user-select: none;
         }
+        .search-container {
+            min-height: 50px;
+            justify-items: center;
+            align-items: center;
+            padding: .5em;
+        }
         .cards {
             display: flex;
             flex-wrap: wrap;
@@ -188,12 +194,10 @@ block style
 
 block content
     div.uk-container
-        nav.uk-navbar-container(uk-sticky='bottom: #offset', uk-navbar)
-            div.uk-navbar-left
-                div.uk-navbar-item
-                    div.uk-search.uk-search-navbar.uk-width-1-1
-                        span(uk-search-icon)
-                        input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)')
+        nav.search-container.uk-navbar-container(uk-sticky='bottom: #offset', uk-navbar)
+            div.uk-search.uk-search-navbar.uk-width-1-1
+                span(uk-search-icon)
+                input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)')
         div.cards
             each member in members
                 div.profile-card
