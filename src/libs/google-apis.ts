@@ -272,20 +272,18 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                 valueInputOption: 'RAW',
                 data: [
                     {
-                        range: `${googleApis.memberSheetName}!B${rowNum}:N`,
+                        range: `${googleApis.memberSheetName}!B${rowNum}:F`,
                         values: [[
                             social.displayName,
                             undefined,                   // Status.
                             undefined,                   // Manager.
                             undefined,                   // LINE ID.
                             social.pictureURL,
-                            undefined,                   // Avatar URL.
-                            undefined,                   // Job of character.
-                            undefined,                   // Level of character.
-                            undefined,                   // Union level of character.
-                            undefined,                   // Groups.
-                            undefined,                   // Mood phrase.
-                            undefined,                   // First create time.
+                        ]],
+                    },
+                    {
+                        range: `${googleApis.memberSheetName}!N${rowNum}`,
+                        values: [[
                             (new Date).toLocaleString(), // Last update time.
                         ]],
                     },
@@ -299,6 +297,47 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             undefined,                   // First create time.
                             (new Date).toLocaleString(), // Last update time.
                             social.failCount,            // Count of failure.
+                        ]],
+                    },
+                ],
+            },
+        });
+
+        return callback(null);
+    } catch (err) {
+        return callback('ERR_UPDATE_VALUES', err.errors);
+    }
+}
+
+async function _updateCharData(rowNum: number, profile: Partial<IProfile>, callback: any, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth,
+    });
+
+    const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
+
+    try {
+        // Update sheet 'members' and 'line_profiles'.
+        const res = await batchUpdate({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            resource: {
+                valueInputOption: 'RAW',
+                data: [
+                    {
+                        range: `${googleApis.memberSheetName}!G${rowNum}:J`,
+                        values: [[
+                            profile.avatarURL,           // Avatar URL.
+                            profile.job,                 // Job of character.
+                            profile.level,               // Level of character.
+                            profile.unionLevel,          // Union level of character.
+                        ]],
+                    },
+                    {
+                        range: `${googleApis.memberSheetName}!N${rowNum}`,
+                        values: [[
+                            (new Date).toLocaleString(), // Last update time.
                         ]],
                     },
                 ],
@@ -392,6 +431,10 @@ export const addMember = async (profile: IProfile, social: ISocialData, errorHan
 
 export const updateLineProfile = async (rowNum: number, social: ISocialData, errorHandler: any) =>
     await authorize(credentials, _updateLineProfile.bind(null, rowNum, social, errorHandler))
+        .catch((e) => console.error(e));
+
+export const updateCharData = async (rowNum: number, profile: Partial<IProfile>, errorHandler: any) =>
+    await authorize(credentials, _updateCharData.bind(null, rowNum, profile, errorHandler))
         .catch((e) => console.error(e));
 
 export const updateMoodPhrase = async (lineID: string, moodPhrase: string, errorHandler: any) =>

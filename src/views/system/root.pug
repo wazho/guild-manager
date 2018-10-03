@@ -1,0 +1,41 @@
+extends ../base.pug
+block title
+    | 系統管理
+
+block content
+    div.uk-section.uk-section-muted
+        div.uk-container.uk-container-xsmall
+            h1.uk-heading-line.uk-text-center
+                | 系統管理
+
+
+            ul.uk-list.uk-list-divider
+                li
+                    a.uk-link-heading(href='/system/init')
+                        | 系統首次建置
+                li
+                    a.uk-link-heading(onclick='updateLineProfiles()')
+                        | 手動更新 LINE 資訊
+                li
+                    a.uk-link-heading(onclick='updateCharactersData()')
+                        | 手動更新戰地資訊
+    script.
+        function updateLineProfiles() {
+            fetch('/system/update-line-profiles', { method: 'POST' });
+
+            UIkit.notification({
+                pos: 'bottom-center',
+                status: 'success',
+                message: '開始更新',
+            });
+        }
+
+        function updateCharactersData() {
+            fetch('/system/update-characters-data', { method: 'POST' });
+
+            UIkit.notification({
+                pos: 'bottom-center',
+                status: 'success',
+                message: '開始更新',
+            });
+        }
