@@ -397,6 +397,7 @@ async function taskRefreshMembersData(this: any) {
     membersData = {
         members: (await _getMembers())
             .map((o, i) => ({ ...o, rowNum: i + 2 })) // 2 is a magic !
+            .sort((a, b) => Math.random() - Math.random()) // shuffle.
             .sort((a, b) => a.status - b.status)
             .filter((o) => o.status <= MemberStatus.會員),
         lastUpdated: (new Date).toLocaleString(),

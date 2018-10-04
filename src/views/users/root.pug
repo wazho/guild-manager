@@ -23,6 +23,13 @@ block style
             align-items: center;
             padding: .5em;
         }
+        .uk-subnav {
+            -webkit-user-select: none;
+             -khtml-user-select: none;
+               -moz-user-select: none;
+                 -o-user-select: none;
+                    user-select: none;
+        }
         .cards {
             display: flex;
             flex-wrap: wrap;
@@ -198,65 +205,78 @@ block content
             div.uk-search.uk-search-navbar.uk-width-1-1
                 span(uk-search-icon)
                 input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)')
-        div.cards
-            each member in members
-                div.profile-card
-                    div.header
-                        span.status
-                            if member.status === 1
-                                | 公會長
-                            else if member.status === 2
-                                | 副會長
-                            else if member.status === 3
-                                | 會員
-                            else if member.status === 4
-                                | 離會會員
-                    div.content-1
-                        div.avatar-picture(class=`${member.job}`)
-                            img.avatar.uk-border-rounded(
-                                ondragstart='return false;',
-                                src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
-                            )
-                            img.follower(
-                                class=`${member.job}`
-                                ondragstart='return false;',
-                                src=`/assets/class_follower/${member.job}.png`, onerror='this.style.display="none"'
-                            )
-                        if member.groups.length
-                            div.groups
-                                each group in member.groups
-                                    img.group-icon.uk-border-pill(
-                                        width='30', height='30', ondragstart='return false;',
-                                        uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: right`,
-                                        src= `/assets/bosses/${group[0]}.png`
-                                    )
-                    div.content-2
-                        div.uk-grid-collapse.uk-text-center(uk-grid)
-                            div.content-left
-                                img.uk-border-pill(
-                                    width='35', height='35', ondragstart='return false;',
-                                    src= member.pictureURL, onerror='this.src="/assets/images/default-picture.png"'
+
+        div(uk-filter='target: .js-filter')
+            ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
+                li(uk-filter-control='.status-3')
+                    a(href='#')
+                        | 會員
+                li(uk-filter-control='.status-1, .status-2')
+                    a(href='#')
+                        | 管理群
+                li.uk-active(uk-filter-control)
+                    a(href='#')
+                        | 全體
+
+            div.cards.js-filter
+                each member in members
+                    div.profile-card(class=`status-${member.status}`)
+                        div.header
+                            span.status
+                                if member.status === 1
+                                    | 公會長
+                                else if member.status === 2
+                                    | 副會長
+                                else if member.status === 3
+                                    | 會員
+                                else if member.status === 4
+                                    | 離會會員
+                        div.content-1
+                            div.avatar-picture(class=`${member.job}`)
+                                img.avatar.uk-border-rounded(
+                                    ondragstart='return false;',
+                                    src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                                 )
-                                div.user-name
-                                    | #{member.displayName}
-                            div.content-right
-                                div.character-name
-                                    | #{member.charName}
-                                div.character-joblevel
-                                    if member.job
-                                        span.character-job
-                                            | #{member.job}
-                                        span.character-level
-                                            | (Lv.#{member.level})
-                                    else
-                                        span.character-job
-                                            | 未知
-                    if member.moodPhrase
-                        div.footer
-                            | #{member.moodPhrase}
-                    else
-                        div.footer.default
-                            | 未寫下心情小語
+                                img.follower(
+                                    class=`${member.job}`
+                                    ondragstart='return false;',
+                                    src=`/assets/class_follower/${member.job}.png`, onerror='this.style.display="none"'
+                                )
+                            if member.groups.length
+                                div.groups
+                                    each group in member.groups
+                                        img.group-icon.uk-border-pill(
+                                            width='30', height='30', ondragstart='return false;',
+                                            uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: right`,
+                                            src= `/assets/bosses/${group[0]}.png`
+                                        )
+                        div.content-2
+                            div.uk-grid-collapse.uk-text-center(uk-grid)
+                                div.content-left
+                                    img.uk-border-pill(
+                                        width='35', height='35', ondragstart='return false;',
+                                        src= member.pictureURL, onerror='this.src="/assets/images/default-picture.png"'
+                                    )
+                                    div.user-name
+                                        | #{member.displayName}
+                                div.content-right
+                                    div.character-name
+                                        | #{member.charName}
+                                    div.character-joblevel
+                                        if member.job
+                                            span.character-job
+                                                | #{member.job}
+                                            span.character-level
+                                                | (Lv.#{member.level})
+                                        else
+                                            span.character-job
+                                                | 未知
+                        if member.moodPhrase
+                            div.footer
+                                | #{member.moodPhrase}
+                        else
+                            div.footer.default
+                                | 未寫下心情小語
         div.footer
             | Managed and designed by 
             a.uk-link-text(href='http://salmon.tw', target='_blank', uk-tooltip='title: go to my site\: salmon.tw')
