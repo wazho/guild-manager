@@ -196,6 +196,11 @@ block style
             color: #AAA;
             font-style: italic;
         }
+        .totop {
+            position: fixed;
+            bottom: 2.5em;
+            right: 2.0em;
+        }
         .hidden {
             display: none;
         }
@@ -219,7 +224,7 @@ block content
                     a(href='#')
                         | 全體
 
-            div.cards.js-filter(uk-scrollspy='hidden: true; target: > .profile-card; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 100')
+            div.cards.js-filter(uk-scrollspy='hidden: true; target: > .profile-card; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 50')
                 each member in members
                     div.profile-card(class=`status-${member.status}`)
                         div.header
@@ -278,10 +283,14 @@ block content
                         else
                             div.footer.default
                                 | 未寫下心情小語
+
         div.footer
             | Managed and designed by 
             a.uk-link-text(href='http://salmon.tw', target='_blank', uk-tooltip='title: go to my site\: salmon.tw')
                 | Salmon
+
+        div.totop
+            a(href='#', uk-totop, uk-scroll)
 
     script.
         function filtering(e) {
