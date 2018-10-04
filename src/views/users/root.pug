@@ -5,6 +5,7 @@ block title
 block style
     style(type='text/css').
         html, body {
+            height: auto;
             overflow-y: scroll;
             background: rgba(0, 0, 0, 0) url('/assets/images/members-bg.png') repeat scroll 0% 0%;
         }
@@ -218,7 +219,7 @@ block content
                     a(href='#')
                         | 全體
 
-            div.cards.js-filter
+            div.cards.js-filter(uk-scrollspy='hidden: true; target: > .profile-card; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 100')
                 each member in members
                     div.profile-card(class=`status-${member.status}`)
                         div.header
