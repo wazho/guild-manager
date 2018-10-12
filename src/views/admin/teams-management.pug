@@ -1,0 +1,98 @@
+extends ../base.pug
+block title
+    | 王團隊員管理
+
+block style
+    style(type='text/css').
+        body {
+            overflow: hidden;
+            background: url(https://orig00.deviantart.net/585a/f/2016/125/e/a/_maplestory_background__walk_in_the_park_by_bboki-da1e7rd.png) no-repeat scroll center center / cover;
+        }
+        .content {
+            max-height: 500px;
+            overflow-y: scroll;
+            padding-top: 2em;
+            background: rgba(255, 255, 255, .85);
+        }
+
+    style(type='text/css').
+        img {
+            -webkit-user-select: none;
+             -khtml-user-select: none;
+               -moz-user-select: none;
+                 -o-user-select: none;
+                    user-select: none;
+        }
+        .player-card {
+            position: relative;
+        }
+        .avatar {
+            position: relative;
+            width: 60px;
+            height: 50px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0) url('/assets/images/card-bg.png') repeat scroll 0% 0%;
+            border: 1px solid rgba(175, 175, 175, .75);
+        }
+        .avatar img {
+            position: absolute;
+            top: -15px;
+            left: -20px;
+            width: 100px;
+            max-width: none;
+            -webkit-transform: scale(-1, 1);
+               -moz-transform: scale(-1, 1);
+                -ms-transform: scale(-1, 1);
+                 -o-transform: scale(-1, 1);
+                    transform: scale(-1, 1);
+        }
+        .character-level {
+            font-size: .85em;
+            margin-left: .25em;
+        }
+
+block content
+    div.uk-section.uk-position-center-left.uk-position-center-right
+        div.content.uk-container.uk-container-xsmall
+            h2.uk-heading-line.uk-text-center
+                | 王團隊員管理
+            ul(class='uk-child-width-1-2@s', uk-grid)
+                each teamName in [1, 2, 3, 4]
+                    li
+                        h4 #{teamName}
+
+                        div(uk-sortable='group: player; handle: .uk-sortable-handle-player')
+                            each member in members
+                                +player-card(member)
+                        +append-new-team-member
+                li
+                    h4 新隊伍
+                    div(uk-sortable='group: player; handle: .uk-sortable-handle-player')
+                    +append-new-team-member
+                                
+mixin player-card(member)
+    div.uk-margin
+        div.player-card.uk-card-default.uk-card-body.uk-card-small.uk-grid-small.uk-flex-middle(uk-grid)
+            button.uk-alert-close(type='button', uk-close)
+            div.uk-sortable-handle-player.avatar.uk-width-auto
+                img.uk-border-rounded(
+                    ondragstart='return false;',
+                    src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
+                )
+            div.uk-width-expand
+                div.character-name
+                    | #{member.charName}
+                div.character-joblevel
+                    if member.job
+                        span.character-job
+                            | #{member.job}
+                        span.character-level
+                            | (Lv.#{member.level})
+                    else
+                        span.character-job
+                            | 未知
+
+mixin append-new-team-member
+    div.uk-margin
+        div.player-card.uk-card-default.uk-card-body.uk-card-small.uk-grid-small.uk-flex-center(uk-grid)
+            a(href='#', uk-icon='icon: plus; ratio: 1.5')

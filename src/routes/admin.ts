@@ -2,7 +2,7 @@
 import * as Router from 'koa-router';
 // Local modules.
 import { webAppURL } from '../config';
-import { findMember, MemberStatus } from '../libs/google-apis';
+import { findMember, MemberStatus, getMembersData } from '../libs/google-apis';
 import { renderHtml } from '../libs/render-html';
 
 const router = new Router();
@@ -27,7 +27,15 @@ async function levelIdentify(ctx: Router.IRouterContext, next: any) {
 router.get('/', levelIdentify, async (ctx, next) => {
     const { user } = ctx.state;
 
-    const path = './src/views/admin/root.pug';
+    const path = './src/views/admin/index.pug';
+    const html = renderHtml(path, { user });
+    ctx.body = html;
+});
+
+router.get('/invite-code', levelIdentify, async (ctx, next) => {
+    const { user } = ctx.state;
+
+    const path = './src/views/admin/invite-code.pug';
     const html = renderHtml(path, { user });
     ctx.body = html;
 });
@@ -51,10 +59,23 @@ router.post('/invite-code', levelIdentify, async (ctx, next) => {
 
         const inviteCode = Buffer.from(data, 'utf8').toString('hex');
 
-        const path = './src/views/admin/invite-code.pug';
+        const path = './src/views/admin/invitation.pug';
         const html = renderHtml(path, { manager, player, inviteCode, webAppURL });
         ctx.body = html;
     }
+});
+
+router.get('/teams-management', levelIdentify, async (ctx, next) => {
+    const { user } = ctx.state;
+
+    const availableLevels = [MemberStatus.公會長, MemberStatus.副會長, MemberStatus.會員];
+
+    const { members: allMembers } = await getMembersData();
+    const members = allMembers.filter((member) => availableLevels.includes(member.status));
+
+    const path = './src/views/admin/teams-management.pug';
+    const html = renderHtml(path, { user, members });
+    ctx.body = html;
 });
 
 export { router };

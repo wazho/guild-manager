@@ -442,10 +442,19 @@ export const updateMoodPhrase = async (lineID: string, moodPhrase: string, error
     await authorize(credentials, _updateMoodPhrase.bind(null, lineID, moodPhrase, errorHandler))
         .catch((e) => console.error(e));
 
+/**
+ * Get all members information.
+ */
 export const getMembersData = () => membersData;
 
+/**
+ * Get LINE profiles from database.
+ */
 export const getLineProfiles = _getLineProfiles;
 
+/**
+ * Search a specific member.
+ */
 export const findMember = async (lineID: string) => {
     if (membersData && membersData.members) {
         const found = membersData.members.find((member) => member.lineID === lineID);

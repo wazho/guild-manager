@@ -5,63 +5,51 @@ block title
 block style
     style(type='text/css').
         body {
-            overflow: hidden;
             background: url(https://orig00.deviantart.net/585a/f/2016/125/e/a/_maplestory_background__walk_in_the_park_by_bboki-da1e7rd.png) no-repeat scroll center center / cover;
         }
         .content {
-            max-height: 500px;
-            overflow-y: scroll;
             padding-top: 2em;
             background: rgba(255, 255, 255, .85);
         }
 
 block content
     div.uk-section.uk-position-center-left.uk-position-center-right
-        div.content.uk-container.uk-container-xsmall
-            h2.uk-heading-line.uk-text-center
-                | 邀請碼生成
+        div.uk-container.uk-container-xsmall
+            div.content.uk-margin-medium-bottom.uk-card.uk-card-default.uk-card-body
+                form(action='/admin/invite-code', method='post')
+                    h2.uk-heading-line.uk-text-center
+                        | 邀請碼生成
 
-            div.uk-margin
-                label.uk-form-label
-                    | 管理者
-                div.uk-form-controls
-                    div.uk-inline
-                        span.uk-form-icon(uk-icon='icon: user')
-                        input.uk-input(type='text', value= manager, disabled)
+                    div.uk-margin
+                        span.uk-label.uk-margin-small-right
+                            | 請留意
+                        | 相同角色名稱生成的邀請碼，只能夠被使用一次。
+                        | 建議直接複製受邀者的角色名稱，以避免輸入錯誤。
 
-            div.uk-margin
-                label.uk-form-label
-                    | 玩家角色名稱
-                div.uk-form-controls
-                    div.uk-inline
-                        span.uk-form-icon(uk-icon='icon: user')
-                        input.uk-input(type='text', value= player, disabled)
+                    div.uk-margin
+                        label.uk-form-label(for='manager')
+                            | 管理者
+                        div.uk-form-controls
+                            div.uk-inline
+                                span.uk-form-icon(uk-icon='icon: user')
+                                input#manager.uk-input(name='manager', type='text', value= user.charName, readonly)
 
-            div.uk-margin
-                label.uk-form-label
-                    | 邀請信函
-                div.uk-form-controls
-                    textarea#invite-message.uk-textarea(rows='3' readonly)
-                        | 哈囉，#{player}
-                        |
-                        | 我是淫小築的幹部 #{manager}，歡迎你的加入！ 接下來，請到這份網址進行會籍登錄。
-                        |
-                        | #{webAppURL}?inviteCode=#{inviteCode} 
+                    div.uk-margin
+                        label.uk-form-label(for='player')
+                            | 玩家角色名稱
+                        div.uk-form-controls
+                            div.uk-inline
+                                span.uk-form-icon(uk-icon='icon: user')
+                                input#player.uk-input(name='player', type='text', autocomplete='off')
 
-            div.uk-margin
-                button.uk-button.uk-button-primary.uk-width-1-1(onclick='copyToClipboard("invite-message")')
-                    | 複製邀請信函
+                    input#form-submit.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(type='submit', value='送出', disabled)
 
-            a(href='/admin')
-                button.uk-button.uk-align-left
-                    | 回上頁
-
-            a(href='/')
-                button.uk-button.uk-align-right
-                    | 回首頁
+                a(href='/admin')
+                    button.uk-button.uk-align-left.uk-margin-remove-bottom
+                        | 回管理頁
 
     script.
-        function copyToClipboard(id) {
-            document.getElementById(id).select();
-            document.execCommand('copy');
-        }
+        const submitElement = document.getElementById('form-submit');
+        document.getElementById('player').addEventListener('input', (event) => {
+            submitElement.disabled = !event.target.value;
+        });
