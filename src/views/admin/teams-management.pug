@@ -2,6 +2,11 @@ extends ../base.pug
 block title
     | 王團隊員管理
 
+block extendedLibs
+    script(src='https://unpkg.com/babel-standalone@6/babel.min.js', crossorigin)
+    script(src='https://unpkg.com/react@16/umd/react.development.js', crossorigin)
+    script(src='https://unpkg.com/react-dom@16/umd/react-dom.development.js', crossorigin)
+
 block style
     style(type='text/css').
         body {
@@ -52,47 +57,12 @@ block style
         }
 
 block content
-    div.uk-section.uk-position-center-left.uk-position-center-right
-        div.content.uk-container.uk-container-xsmall
-            h2.uk-heading-line.uk-text-center
-                | 王團隊員管理
-            ul(class='uk-child-width-1-2@s', uk-grid)
-                each teamName in [1, 2, 3, 4]
-                    li
-                        h4 #{teamName}
+    div#root
 
-                        div(uk-sortable='group: player; handle: .uk-sortable-handle-player')
-                            each member in members
-                                +player-card(member)
-                        +append-new-team-member
-                li
-                    h4 新隊伍
-                    div(uk-sortable='group: player; handle: .uk-sortable-handle-player')
-                    +append-new-team-member
-                                
-mixin player-card(member)
-    div.uk-margin
-        div.player-card.uk-card-default.uk-card-body.uk-card-small.uk-grid-small.uk-flex-middle(uk-grid)
-            button.uk-alert-close(type='button', uk-close)
-            div.uk-sortable-handle-player.avatar.uk-width-auto
-                img.uk-border-rounded(
-                    ondragstart='return false;',
-                    src= member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
-                )
-            div.uk-width-expand
-                div.character-name
-                    | #{member.charName}
-                div.character-joblevel
-                    if member.job
-                        span.character-job
-                            | #{member.job}
-                        span.character-level
-                            | (Lv.#{member.level})
-                    else
-                        span.character-job
-                            | 未知
-
-mixin append-new-team-member
-    div.uk-margin
-        div.player-card.uk-card-default.uk-card-body.uk-card-small.uk-grid-small.uk-flex-center(uk-grid)
-            a(href='#', uk-icon='icon: plus; ratio: 1.5')
+    //- React component.
+    script(type='text/babel')
+        include ./teams-management.jsx
+    script(type='text/babel').
+        const members = !{JSON.stringify(members)};
+        const domContainer = document.querySelector('#root');
+        ReactDOM.render(React.createElement(TeamsManagement, { members }), domContainer);
