@@ -18,17 +18,73 @@ class TeamsManagement extends React.Component {
         };
     }
 
+    handleSortable() {
+        const { currentGroup, members } = this.state;
+
+        const updatedMembers = [];
+
+        const teamElements = document.querySelectorAll('[data-teamname]');
+        const teamHasMemberElements = [...teamElements].filter((e) => [...e.querySelectorAll('[data-charname]')].length);
+        const teamList = [...new Set(teamHasMemberElements.map(({ dataset }) => dataset.teamname))];
+
+        const updatedTeamNameMapping = {};
+        teamList.forEach((teamName, i) => { updatedTeamNameMapping[teamName] = String(i + 1) });
+
+        teamElements.forEach((teamElement) =>
+            teamElement.querySelectorAll('[data-charname]').forEach((char, i) =>
+                updatedMembers.push({
+                    charName: char.dataset.charname,
+                    groupName: teamElement.dataset.groupname,
+                    teamName: updatedTeamNameMapping[teamElement.dataset.teamname],
+                    memberOrdering: String(i + 1),
+                })
+            )
+        );
+
+        members.forEach((member) => {
+            member.groups.forEach((team, i) => {
+                const { charName } = member;
+                const [groupName, teamName, ordering] = team;
+
+                if (currentGroup === groupName) {
+                    // Remove the old no matter that he/she was team member first.
+                    member.groups.splice(i, 1);
+                    // Add the player to new team.
+                    const found = updatedMembers.find((m) => m.charName === charName && m.groupName === currentGroup);
+                    found && (member.groups.push([found.groupName, found.teamName, found.memberOrdering]));
+                }
+            });
+        });
+
+        // This is hacking, must clean all first.
+        this.setState({ members: [] }, () => this.setState({ members }));
+    }
+
+    componentDidMount() {
+        this.handleSortable = this.handleSortable.bind(this);
+
+        const sortable = document.getElementById('teams-panel');
+        sortable.addEventListener('stop', this.handleSortable);
+    }
+
+    componentDidUpdate() {
+        // Clean the reamings of new team block.
+        const newTeamMemberElements = document.querySelectorAll('[data-teamname=new] [data-charname]');
+        newTeamMemberElements.forEach((e) => e.remove());
+    }
+
     render() {
         const { currentGroup, members } = this.state;
 
         const groups = {};
         members.forEach((member) =>
             member.groups.forEach((group) => {
-                const groupName = group[0];
-                const teamName = group[1];
+                const [groupName, teamName, ordering] = group;
                 !groups[groupName] && (groups[groupName] = {});
-                !groups[groupName][teamName] && (groups[groupName][teamName] = []);
-                groups[groupName][teamName].push(member);
+                // !groups[groupName][teamName] && (groups[groupName][teamName] = []);
+                // groups[groupName][teamName].push(member);
+                !groups[groupName][teamName] && (groups[groupName][teamName] = {});
+                groups[groupName][teamName][ordering] = member;
             })
         );
 
@@ -49,12 +105,12 @@ class TeamsManagement extends React.Component {
                         </select>
                     </div>
 
-                    <ul className='uk-child-width-1-2@s' uk-grid='true'>
+                    <ul id='teams-panel' className='uk-child-width-1-2@s' uk-grid='true'>
                         {Object.keys(teams).map((teamName, i) =>
-                            <li key={i}>
+                            <li key={i} data-groupname={currentGroup} data-teamname={teamName}>
                                 <h4 children={`${currentGroup} - ${teamName} 團`} />
                                 <div uk-sortable='group: player; handle: .uk-sortable-handle-player'>
-                                    {teams[teamName].map((member, i) =>
+                                    {Object.values(teams[teamName]).map((member, i) =>
                                         <PlayerCard key={i} member={member} />
                                     )}
                                 </div>
@@ -65,7 +121,7 @@ class TeamsManagement extends React.Component {
                                 </div>
                             </li>
                         )}
-                        <li>
+                        <li data-groupname={currentGroup} data-teamname={`new`}>
                             <h4 children={`新隊伍`} />
                             <div uk-sortable='group: player; handle: .uk-sortable-handle-player'>
                                 <div className='uk-margin'>
@@ -91,7 +147,7 @@ class PlayerCard extends React.Component {
         const { member } = this.props;
 
         return (
-            <div className='uk-margin'>
+            <div className='uk-margin' data-charname={member.charName}>
                 <div className='player-card uk-card-default uk-card-body uk-card-small uk-grid-small uk-flex-middle' uk-grid='true'>
                     <button className='uk-alert-close' type='button' uk-close='true' />
                     <div className='uk-sortable-handle-player avatar uk-width-auto'>
