@@ -3,6 +3,15 @@ import fetch from 'node-fetch';
 
 const apiURL = 'https://tw.event.beanfun.com/mapleStory/E20170713/Default.aspx/GetSearchRank';
 
+const getJobName = (jobName: string, jobID: number) => {
+    if (jobName) { return jobName; }
+
+    switch (jobID) {
+        case 15512:
+            return '亞克';
+    }
+}
+
 // serverID = 6 : 殺人鯨伺服器
 export async function getCharData(charName: string, serverID = '6') {
     const options = {
@@ -26,7 +35,7 @@ export async function getCharData(charName: string, serverID = '6') {
 
         return {
             name: charData.CharacterName,
-            job: charData.JobName,
+            job: getJobName(charData.JobName, charData.Job),
             avatarURL: charData.Avatar_CharacterLookURL,
             level: charData.Level,
             unionLevel: charData.UnionLevel,

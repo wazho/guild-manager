@@ -81,8 +81,6 @@ class TeamsManagement extends React.Component {
             member.groups.forEach((group) => {
                 const [groupName, teamName, ordering] = group;
                 !groups[groupName] && (groups[groupName] = {});
-                // !groups[groupName][teamName] && (groups[groupName][teamName] = []);
-                // groups[groupName][teamName].push(member);
                 !groups[groupName][teamName] && (groups[groupName][teamName] = {});
                 groups[groupName][teamName][ordering] = member;
             })
@@ -114,22 +112,13 @@ class TeamsManagement extends React.Component {
                                         <PlayerCard key={i} member={member} />
                                     )}
                                 </div>
-                                <div className='uk-margin'>
-                                    <div className='player-card uk-card-default uk-card-body uk-card-small uk-grid-small uk-flex-center' uk-grid='true'>
-                                        <a href='#' uk-icon='icon: plus; ratio: 1.5' />
-                                    </div>
-                                </div>
+                                <AddMember currentGroup={currentGroup} teamName={teamName} />
                             </li>
                         )}
                         <li data-groupname={currentGroup} data-teamname={`new`}>
                             <h4 children={`新隊伍`} />
-                            <div uk-sortable='group: player; handle: .uk-sortable-handle-player'>
-                                <div className='uk-margin'>
-                                    <div className='player-card uk-card-default uk-card-body uk-card-small uk-grid-small uk-flex-center' uk-grid='true'>
-                                        <a href='#' uk-icon='icon: plus; ratio: 1.5' />
-                                    </div>
-                                </div>
-                            </div>
+                            <div uk-sortable='group: player; handle: .uk-sortable-handle-player' />
+                            <AddMember currentGroup={currentGroup} teamName={`new`} />
                         </li>
                     </ul>
                 </div>
@@ -179,6 +168,51 @@ class PlayerCard extends React.Component {
                     </div>
                 </div>
             </div>
+        );
+    }
+}
+
+class AddMember extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const { currentGroup, teamName } = this.props;
+
+        return (
+            <React.Fragment>
+                <div className='uk-margin'>
+                    <div className='player-card uk-card-default uk-card-body uk-card-small uk-grid-small uk-flex-center'
+                        uk-toggle={`target: #modal-group-${currentGroup}-${teamName}`} uk-grid='true'
+                        children={<a uk-icon='icon: plus; ratio: 1.5' />}
+                    />
+                </div>
+
+                <div id={`modal-group-${currentGroup}-${teamName}`} uk-modal='true'>
+                    <div className='uk-modal-dialog'>
+                        <button className='uk-modal-close-default' type='button' uk-close='true'></button>
+                        <div className='uk-modal-header'>
+                            <h2 className='uk-modal-title'
+                                children={`${currentGroup} - ${teamName} 團`}
+                            />
+                        </div>
+                        <div className='uk-modal-body'>
+                            <nav className='search-container uk-navbar-container' uk-navbar='true'>
+                                <div className='uk-search uk-search-navbar uk-width-1-1'>
+                                    <span uk-search-icon='true' />
+                                    <input id='search uk-search-input' type='search' autocomplete='off' placeholder='角色 ID' />
+                                </div>
+                            </nav>
+                                    {/* input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)') */}
+                        </div>
+                        <div className='uk-modal-footer uk-text-right'>
+                            <button className='uk-button uk-button-default uk-modal-close' type='button'>Cancel</button>
+                            <button className='uk-button uk-button-primary uk-modal-close' type='button'>Next</button>
+                        </div>
+                    </div>
+                </div>
+            </React.Fragment>
         );
     }
 }
