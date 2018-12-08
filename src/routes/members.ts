@@ -2,30 +2,32 @@
 import * as Router from 'koa-router';
 import { parse } from 'qs';
 // Local modules.
-import { findMember, getMembersData, addMember, MemberStatus, updateMoodPhrase } from '../libs/google-apis';
+import {
+    MemberStatus,
+    findMember,
+    getMembersData,
+    getTeamsData,
+    addMember,
+    updateMoodPhrase,
+} from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
+import { statusAuth } from '../middlewares/status-auth';
 
 const router = new Router();
 
-router.get('/', async (ctx, next) => {
-    const { user } = ctx.state;
-    const remoteUser = await findMember(user && user.lineID);
+router.get('/', statusAuth, async (ctx, next) => {
+    const { members, lastUpdated } = await getMembersData();
+    const path = './src/views/users/root.pug';
+    const html = renderHtml(path, { members, lastUpdated });
+    ctx.body = html;
+});
 
-    if (remoteUser) {
-        const legalLevels = [MemberStatus.公會長, MemberStatus.副會長, MemberStatus.會員];
-
-        if (legalLevels.includes(remoteUser.status)) {
-            const { members, lastUpdated } = await getMembersData();
-            const path = './src/views/users/root.pug';
-            const html = renderHtml(path, { members, lastUpdated });
-            ctx.body = html;
-        } else {
-            ctx.redirect('/');
-        }
-    } else {
-        ctx.redirect('/login');
-    }
+router.get('/teams', statusAuth, async (ctx, next) => {
+    const { teams, lastUpdated } = await getTeamsData();
+    const path = './src/views/users/teams.pug';
+    const html = renderHtml(path, { teams, lastUpdated });
+    ctx.body = html;
 });
 
 router.get('/declaration', (ctx, next) => {
@@ -127,7 +129,7 @@ router.post('/register', async (ctx, next) => {
     }
 });
 
-router.post('/mood-phrase', async (ctx, next) => {
+router.post('/mood-phrase', statusAuth, async (ctx, next) => {
     try {
         const { user } = ctx.state;
         const remoteUser = await findMember(user && user.lineID);

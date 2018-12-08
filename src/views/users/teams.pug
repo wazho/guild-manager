@@ -1,0 +1,124 @@
+extends ../base.pug
+block title
+    | 新楓之谷 - 淫小築 - 王團列表
+
+block style
+    style(type='text/css').
+        html, body {
+            height: auto;
+            overflow-y: scroll;
+            background: rgba(0, 0, 0, 0) url('/assets/images/members-bg.png') repeat scroll 0% 0%;
+        }
+
+    style(type='text/css').
+        img {
+            -webkit-user-select: none;
+             -khtml-user-select: none;
+               -moz-user-select: none;
+                 -o-user-select: none;
+                    user-select: none;
+        }
+        .teams {
+            text-align: center;
+        }
+        .team {
+            max-width: 750px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0) url(/assets/images/card-bg.png) repeat scroll 0 0;
+        }
+        .team:not(:last-child) {
+            margin-bottom: 1em;
+        }
+        .team .title {
+            padding-top: 0.5em;
+            padding-bottom: 0.25em;
+        }
+        .team .title img.boss {
+            margin-right: 0.25em;
+        }
+        .char {
+            display: inline-block;
+            max-width: 120px;
+            text-align: center;
+            margin: 0.5em;
+        }
+        .char .avatar {
+        }
+        .char .charName {
+            text-align: center;
+            color: #EFEFEF;
+            background: rgba(0, 0, 0, .8);
+            border-radius: 3px;
+            padding-left: 0.25em;
+            padding-right: 0.25em;
+        }
+        .footer {
+            text-align: center;
+            padding: 2em 0 .5em 0;
+        }
+        .footer.default {
+            color: #AAA;
+            font-style: italic;
+        }
+        .totop {
+            position: fixed;
+            bottom: 2.5em;
+            right: 2.0em;
+        }
+
+block content
+    div.uk-container
+        div(uk-filter='target: .js-filter')
+            ul.uk-subnav.uk-subnav-pill.uk-margin-top
+                li
+                    a(href='/')
+                        | 回首頁
+                li
+                    a(href='/members')
+                        | 回會員列表
+            ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
+                li(uk-filter-control='.boss-困難威爾')
+                    a(href='#')
+                        | 困難威爾
+                li(uk-filter-control='.boss-困難露希妲')
+                    a(href='#')
+                        | 困難露希妲
+                li(uk-filter-control='.boss-普通威爾')
+                    a(href='#')
+                        | 普通威爾
+                li(uk-filter-control='.boss-普通露希妲')
+                    a(href='#')
+                        | 普通露希妲
+                li.uk-active(uk-filter-control)
+                    a(href='#')
+                        | 全體
+
+            div.teams.js-filter(uk-scrollspy='hidden: true; target: > .team; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 50')
+                each team in teams
+                    div.team.uk-card.uk-card-default(class=`boss-${team.boss}`)
+                        h2.title.uk-heading-line.uk-text-center
+                            span
+                                img.boss.group-icon.uk-border-pill(
+                                    width='42', height='42', oondragstart='return false;',
+                                    src=`/assets/bosses/${team.boss}.png`
+                                )
+                                | #{team.boss} - #{team.teamNo} 團
+                        each teammate in team.teammates
+                            div.char(
+                                uk-tooltip= `title: ${teammate.member.job} (Lv.${teammate.member.level}); pos: top`,
+                            )
+                                img.avatar.uk-border-rounded(
+                                    ondragstart='return false;',
+                                    src= teammate.member.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
+                                )
+                                div.charName
+                                    | #{teammate.member.charName}
+                                | #{ordering}
+
+        div.footer
+            | Managed and designed by 
+            a.uk-link-text(href='http://salmon.tw', target='_blank', uk-tooltip='title: go to my site\: salmon.tw')
+                | Salmon
+
+        div.totop
+            a(href='#', uk-totop, uk-scroll)

@@ -1,6 +1,7 @@
 // Node modules.
 import * as fs from 'fs';
 import { promisify } from 'util';
+import * as _ from 'lodash';
 import { google } from 'googleapis';
 import { async } from 'rxjs/internal/scheduler/async';
 // Local modules.
@@ -446,6 +447,47 @@ export const updateMoodPhrase = async (lineID: string, moodPhrase: string, error
  * Get all members information.
  */
 export const getMembersData = () => membersData;
+
+/**
+ * Get all teams and the team members.
+ */
+export const getTeamsData = () => {
+    const { members, lastUpdated } = membersData;
+
+    const teams: any[] = [];
+
+    members.forEach((member) => {
+        const { groups } = member;
+        if (groups instanceof Array) {
+            groups.forEach((group) => {
+                const [boss, teamNo, ordering] = group;
+
+                const team = teams.find((o) => o.boss === boss && o.teamNo === teamNo);
+
+                if (team) {
+                    team.teammates.push({
+                        ordering,
+                        member,
+                    });
+                } else {
+                    teams.push({
+                        boss,
+                        teamNo,
+                        teammates: [{
+                            ordering,
+                            member,
+                        }],
+                    });
+                }
+            });
+        }
+    });
+
+    return {
+        teams: _.orderBy(teams, ['boss', 'teamNo'], ['asc', 'asc']),
+        lastUpdated,
+    };
+};
 
 /**
  * Get LINE profiles from database.

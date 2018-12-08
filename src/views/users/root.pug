@@ -213,6 +213,13 @@ block content
                 input#search.uk-search-input(type='search', placeholder='查 ID 或 LINE', autocomplete='off', oninput='filtering(this)')
 
         div(uk-filter='target: .js-filter')
+            ul.uk-subnav.uk-subnav-pill.uk-margin-top
+                li
+                    a(href='/')
+                        | 回首頁
+                li
+                    a(href='/members/teams')
+                        | 前往王團列表
             ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
                 li(uk-filter-control='.status-3')
                     a(href='#')
