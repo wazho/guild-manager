@@ -62,6 +62,23 @@ block content
 
     script.
         function copyToClipboard(id) {
-            document.getElementById(id).select();
+            const el = document.getElementById(id);
+            const oldContentEditable = el.contentEditable;
+            const oldReadOnly = el.readOnly;
+            const range = document.createRange();
+
+            el.contentEditable = true;
+            el.readOnly = false;
+            range.selectNodeContents(el);
+
+            const s = window.getSelection();
+            s.removeAllRanges();
+            s.addRange(range);
+
+            el.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
+
+            el.contentEditable = oldContentEditable;
+            el.readOnly = oldReadOnly;
+
             document.execCommand('copy');
         }
