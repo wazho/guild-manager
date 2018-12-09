@@ -79,19 +79,19 @@ block content
             ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
                 li(uk-filter-control='.boss-困難威爾')
                     a(href='#')
-                        | 困難威爾
+                        | 困難威爾 (#{teams.filter((o) => o.boss === '困難威爾').length})
                 li(uk-filter-control='.boss-困難露希妲')
                     a(href='#')
-                        | 困難露希妲
+                        | 困難露希妲 (#{teams.filter((o) => o.boss === '困難露希妲').length})
                 li(uk-filter-control='.boss-普通威爾')
                     a(href='#')
-                        | 普通威爾
+                        | 普通威爾 (#{teams.filter((o) => o.boss === '普通威爾').length})
                 li(uk-filter-control='.boss-普通露希妲')
                     a(href='#')
-                        | 普通露希妲
+                        | 普通露希妲 (#{teams.filter((o) => o.boss === '普通露希妲').length})
                 li.uk-active(uk-filter-control)
                     a(href='#')
-                        | 全體
+                        | 全體 (#{teams.length})
 
             div.teams.js-filter(uk-scrollspy='hidden: true; target: > .team; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 50')
                 each team in teams

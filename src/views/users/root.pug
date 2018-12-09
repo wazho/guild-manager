@@ -223,13 +223,13 @@ block content
             ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
                 li(uk-filter-control='.status-3')
                     a(href='#')
-                        | 會員
+                        | 會員 (#{members.filter((o) => o.status === 3).length})
                 li(uk-filter-control='.status-1, .status-2')
                     a(href='#')
-                        | 管理群
+                        | 管理群 (#{members.filter((o) => o.status <= 2).length})
                 li.uk-active(uk-filter-control)
                     a(href='#')
-                        | 全體
+                        | 全體 (#{members.filter((o) => o.status <= 3).length})
 
             div.cards.js-filter(uk-scrollspy='hidden: true; target: > .profile-card; cls: uk-animation-slide-bottom-medium; repeat: true; delay: 50')
                 each member in members
