@@ -41,7 +41,7 @@ block content
                 label.uk-form-label
                     | 邀請信函
                 div.uk-form-controls
-                    textarea#invite-message.uk-textarea(rows='3')
+                    textarea#invite-message.uk-textarea(rows='3', readonly)
                         | 哈囉，#{player}
                         |
                         | 我是淫小築的幹部 #{manager}，歡迎你的加入！ 接下來，請到這份網址進行會籍登錄。
@@ -49,7 +49,10 @@ block content
                         | #{webAppURL}?inviteCode=#{inviteCode} 
 
             div.uk-margin
-                button.uk-button.uk-button-primary.uk-width-1-1(onclick='copyToClipboard("invite-message")')
+                //- Based on the library - sudodoki/copy-to-clipboard.
+                button.uk-button.uk-button-primary.uk-width-1-1(
+                    onclick='window.copyToClipboard(document.getElementById("invite-message").value)'
+                )
                     | 複製邀請信函
 
             a(href='/admin')
@@ -59,26 +62,3 @@ block content
             a(href='/')
                 button.uk-button.uk-align-right
                     | 回首頁
-
-    script.
-        function copyToClipboard(id) {
-            const el = document.getElementById(id);
-            const oldContentEditable = el.contentEditable;
-            const oldReadOnly = el.readOnly;
-            const range = document.createRange();
-
-            el.contentEditable = true;
-            el.readOnly = false;
-            range.selectNodeContents(el);
-
-            const s = window.getSelection();
-            s.removeAllRanges();
-            s.addRange(range);
-
-            el.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
-
-            el.contentEditable = oldContentEditable;
-            el.readOnly = oldReadOnly;
-
-            document.execCommand('copy');
-        }
