@@ -65,3 +65,14 @@ $ yarn start
 ## Initial your environment
 
 Visit http://localhost:3000/system/init to finish it.
+
+
+## Optional
+
+You can try to use the same **Google API token** instead of re-generating new one everytimes.
+
+After you visiting http://localhost:3000/system/init, copy your `./token.json` to environment variable. Like below:
+
+```shell
+$ export GOOGLE_APIS_TOKEN="Text in token.json" # Single line better
+```

@@ -6,16 +6,17 @@ import { async } from 'rxjs/internal/scheduler/async';
 import * as GoogleAPIs from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
+import { statusAuth } from '../middlewares/status-auth';
 
 const router = new Router();
 
-router.get('/', async (ctx, next) => {
+router.get('/', statusAuth, async (ctx, next) => {
     const path = './src/views/system/root.pug';
     const html = renderHtml(path);
     ctx.body = html;
 });
 
-router.get('/init', async (ctx, next) => {
+router.get('/init', statusAuth, async (ctx, next) => {
     const handler = (authURL: string) => {
         const path = './src/views/system/init.pug';
         const html = renderHtml(path, { authURL });
@@ -25,7 +26,7 @@ router.get('/init', async (ctx, next) => {
     await GoogleAPIs.initialize(handler);
 });
 
-router.post('/init', async (ctx, next) => {
+router.post('/init', statusAuth, async (ctx, next) => {
     const body = ctx.request.body;
 
     if (body) {
@@ -38,7 +39,7 @@ router.post('/init', async (ctx, next) => {
 
 let isLockRefreshing = false;
 
-router.post('/update-line-profiles', async (ctx, next) => {
+router.post('/update-line-profiles', statusAuth, async (ctx, next) => {
     if (!isLockRefreshing) {
         const lineProfiles = await GoogleAPIs.getLineProfiles();
         async.schedule(refreshLineProfile, 0, { lineProfiles, i: 0 });
@@ -48,7 +49,7 @@ router.post('/update-line-profiles', async (ctx, next) => {
     }
 });
 
-router.post('/update-characters-data', async (ctx, next) => {
+router.post('/update-characters-data', statusAuth, async (ctx, next) => {
     if (!isLockRefreshing) {
         const { members } = await GoogleAPIs.getMembersData();
         members[0].charName

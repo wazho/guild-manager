@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "credentials": "echo $GOOGLE_APIS_CREDENTIALS > credentials.json",
-    "postinstall": "yarn run credentials & yarn run build",
+    "token": "echo $GOOGLE_APIS_TOKEN > token.json",
+    "postinstall": "yarn run credentials & yarn run token & yarn run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ze-Hao Wang (Salmon)",
