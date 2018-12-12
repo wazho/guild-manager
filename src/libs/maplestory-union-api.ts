@@ -7,6 +7,8 @@ const getJobName = (jobName: string, jobID: number) => {
     if (jobName) { return jobName; }
 
     switch (jobID) {
+        case 532:
+            return '重砲指揮官';
         case 15512:
             return '亞克';
     }
