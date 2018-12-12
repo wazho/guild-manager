@@ -15,6 +15,14 @@ block style
                  -o-transform: scale(-1, 1);
                     transform: scale(-1, 1);
         }
+        .character {
+            margin-top: 1.5em;
+        }
+        .logout {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
 
 block content
     div.uk-section.uk-position-center-left.uk-position-center-right
@@ -30,8 +38,10 @@ block content
                         li 4. 完成會籍登錄
                 else
                     article.uk-comment
+                        a.logout.uk-button.uk-button-danger.uk-margin-small-bottom(href='/logout')
+                            | 登出
                         header.uk-comment-header.uk-grid-medium.uk-flex-middle(uk-grid)
-                            div.uk-width-auto
+                            div.character.uk-width-auto
                                 img.avatar.uk-comment-avatar(
                                     ondragstart='return false;',
                                     src= user.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
@@ -66,8 +76,6 @@ block content
                 if user.status == 4
                     button.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(disabled)
                         | 查閱會員列表
-                a.uk-button.uk-button-danger.uk-width-1-1(href='/logout')
-                    | 登出
 
     script.
         localStorage.clear();

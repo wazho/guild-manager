@@ -186,8 +186,8 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         profile.unionLevel,
                         undefined, // Empty groups.
                         undefined, // Empty mood phrase.
-                        (new Date).toLocaleString(),
-                        (new Date).toLocaleString(),
+                        (new Date).toISOString(),
+                        (new Date).toISOString(),
                     ]
                 ]
             },
@@ -209,8 +209,8 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         social.displayName,
                         social.pictureURL,
                         social.encodedToken,
-                        (new Date).toLocaleString(),
-                        (new Date).toLocaleString(),
+                        (new Date).toISOString(),
+                        (new Date).toISOString(),
                     ]
                 ]
             },
@@ -256,6 +256,44 @@ async function _getLineProfiles() {
     }
 }
 
+async function _updateLineToken(rowNum: number, encodedToken: string, callback: any, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth,
+    });
+
+    const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
+
+    try {
+        // Update sheet 'line_profiles'.
+        const res = await batchUpdate({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            resource: {
+                valueInputOption: 'RAW',
+                data: [
+                    {
+                        range: `${googleApis.lineProfileSheetName}!A${rowNum}:G`,
+                        values: [[
+                            undefined,                   // LINE ID, won't replace. 
+                            undefined,                   // Display name.
+                            undefined,                   // Picture URL.
+                            encodedToken,                // Encoded token.
+                            undefined,                   // First create time.
+                            (new Date).toISOString(), // Last update time.
+                            0,                           // Count of failure.
+                        ]],
+                    },
+                ],
+            },
+        });
+
+        return callback(null);
+    } catch (err) {
+        return callback('ERR_UPDATE_VALUES', err.errors);
+    }
+}
+
 async function _updateLineProfile(rowNum: number, social: ISocialData, callback: any, auth: any) {
     const sheets = google.sheets({
         version: 'v4',
@@ -285,7 +323,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                     {
                         range: `${googleApis.memberSheetName}!N${rowNum}`,
                         values: [[
-                            (new Date).toLocaleString(), // Last update time.
+                            (new Date).toISOString(), // Last update time.
                         ]],
                     },
                     {
@@ -296,7 +334,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             social.pictureURL,
                             undefined,                   // Encoded token.
                             undefined,                   // First create time.
-                            (new Date).toLocaleString(), // Last update time.
+                            (new Date).toISOString(), // Last update time.
                             social.failCount,            // Count of failure.
                         ]],
                     },
@@ -338,7 +376,7 @@ async function _updateCharData(rowNum: number, profile: Partial<IProfile>, callb
                     {
                         range: `${googleApis.memberSheetName}!N${rowNum}`,
                         values: [[
-                            (new Date).toLocaleString(), // Last update time.
+                            (new Date).toISOString(), // Last update time.
                         ]],
                     },
                 ],
@@ -401,7 +439,7 @@ async function taskRefreshMembersData(this: any) {
             .sort((a, b) => Math.random() - Math.random()) // shuffle.
             .sort((a, b) => a.status - b.status)
             .filter((o) => o.status <= MemberStatus.會員),
-        lastUpdated: (new Date).toLocaleString(),
+        lastUpdated: (new Date).toISOString(),
     };
     // Generate font.
     generateMinimumFont(JSON.stringify(membersData));
@@ -429,6 +467,10 @@ export const generateToken = async (code: string) =>
 
 export const addMember = async (profile: IProfile, social: ISocialData, errorHandler: any) =>
     await authorize(credentials, _addMember.bind(null, profile, social, errorHandler))
+        .catch((e) => console.error(e));
+
+export const updateLineToken = async (rowNum: number, encodedToken: string, errorHandler: any) =>
+    await authorize(credentials, _updateLineToken.bind(null, rowNum, encodedToken, errorHandler))
         .catch((e) => console.error(e));
 
 export const updateLineProfile = async (rowNum: number, social: ISocialData, errorHandler: any) =>
