@@ -4,13 +4,13 @@ import fetch from 'node-fetch';
 const apiURL = 'https://tw.event.beanfun.com/mapleStory/E20170713/Default.aspx/GetSearchRank';
 
 const getJobName = (jobName: string, jobID: number) => {
-    if (jobName) { return jobName; }
-
     switch (jobID) {
         case 532:
             return '重砲指揮官';
         case 15512:
             return '亞克';
+        default:
+            return jobName;
     }
 }
 
