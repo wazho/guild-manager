@@ -21,7 +21,10 @@ block content
                         | 手動更新戰地資訊
     script.
         function updateLineProfiles() {
-            fetch('/system/update-line-profiles', { method: 'POST' });
+            fetch('/system/update-line-profiles', {
+                method: 'POST',
+                credentials: 'include',
+            });
 
             UIkit.notification({
                 pos: 'bottom-center',
@@ -31,7 +34,10 @@ block content
         }
 
         function updateCharactersData() {
-            fetch('/system/update-characters-data', { method: 'POST' });
+            fetch('/system/update-characters-data', {
+                method: 'POST',
+                credentials: 'include',
+            });
 
             UIkit.notification({
                 pos: 'bottom-center',
