@@ -360,3 +360,13 @@ block content
             const tabs = document.querySelectorAll('#filter-tabs .uk-active');
             tabs.forEach((tab) => tab.click());
         }
+
+        //- Replace browser search (Ctrl+F or F3).
+        window.addEventListener('keydown', (e) => {
+            if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
+                //- Disable default.
+                e.preventDefault();
+                //- Focus on search box.
+                document.getElementById('search').focus();
+            }
+        })
