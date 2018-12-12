@@ -4,6 +4,12 @@ import Router from 'koa-router';
 import { findMember, MemberStatus } from '../libs/google-apis';
 
 export async function statusAuth(ctx: Router.IRouterContext, next: () => Promise<any>) {
+    // Can pass all pages if not production mode.
+    if (process.env.NODE_ENV !== 'production') {
+        await next();
+        return;
+    }
+
     const { user } = ctx.state;
     const remoteUser = await findMember(user && user.lineID);
 

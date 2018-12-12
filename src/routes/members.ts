@@ -1,4 +1,5 @@
 // Node modules.
+import * as _ from 'lodash';
 import * as Router from 'koa-router';
 import { parse } from 'qs';
 // Local modules.
@@ -18,6 +19,11 @@ const router = new Router();
 
 router.get('/', statusAuth, async (ctx, next) => {
     const { members, lastUpdated } = await getMembersData();
+
+    const statistics = {
+        avgLevel: _.meanBy(members, (o) => o.level),
+    };
+
     const path = './src/views/users/root.pug';
     const html = renderHtml(path, { members, lastUpdated });
     ctx.body = html;

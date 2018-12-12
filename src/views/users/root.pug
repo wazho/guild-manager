@@ -259,7 +259,7 @@ block content
                 li
                     a(href='/members/teams')
                         | 前往王團列表
-            ul.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
+            ul#filter-tabs.uk-flex-right.uk-subnav.uk-subnav-pill.uk-margin-top
                 li(uk-filter-control='.status-3')
                     a(href='#')
                         | 會員 (#{members.filter((o) => o.status === 3).length})
@@ -352,4 +352,8 @@ block content
                     ? card.classList.remove('hidden')
                     : card.classList.add('hidden');
             });
+
+            //- Force re-apply the tab of filtering to avoid the animation-slide ineffective.
+            const tabs = document.querySelectorAll('#filter-tabs .uk-active');
+            tabs.forEach((tab) => tab.click());
         }
