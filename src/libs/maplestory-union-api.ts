@@ -1,5 +1,4 @@
 // Node modules.
-import { get } from 'http';
 import fetch from 'node-fetch';
 
 const apiURL = 'https://tw.event.beanfun.com/mapleStory/E20170713/Default.aspx/GetSearchRank';
@@ -39,6 +38,8 @@ export async function getCharData(charName: string, serverID = '6') {
         return {
             name: charData.CharacterName,
             job: getJobName(charData.JobName, charData.Job),
+            // TODO: Base64 version.
+            // avatarURL: await imageToBase64(charData.Avatar_CharacterLookURL),
             avatarURL: charData.Avatar_CharacterLookURL,
             level: charData.Level,
             unionLevel: charData.UnionLevel,
@@ -49,14 +50,12 @@ export async function getCharData(charName: string, serverID = '6') {
     }
 }
 
-function imageToBase64(url: string, callback: any) {
-    get(url, (resp) => {
-        resp.setEncoding('base64');
-        let body = `data:${resp.headers['content-type']};base64,`;
-        resp.on('data', (data) => { body += data});
-        resp.on('end', () => callback(body));
-    }).on('error', (e) => {
-        console.error(`Got error: ${e.message}`);
-        callback('');
-    });
+async function imageToBase64(url: string) {
+    const res = await fetch(url);
+    const buffer = await res.buffer();
+    const body = buffer.toString('base64');
+
+    const data = `data:${(res.headers as any)['content-type']};base64,${body}`;
+
+    return data;
 }
