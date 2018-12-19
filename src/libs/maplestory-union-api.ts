@@ -1,4 +1,5 @@
 // Node modules.
+import { get } from 'http';
 import fetch from 'node-fetch';
 
 const apiURL = 'https://tw.event.beanfun.com/mapleStory/E20170713/Default.aspx/GetSearchRank';
@@ -46,4 +47,16 @@ export async function getCharData(charName: string, serverID = '6') {
     } catch (e) {
         return undefined;
     }
+}
+
+function imageToBase64(url: string, callback: any) {
+    get(url, (resp) => {
+        resp.setEncoding('base64');
+        let body = `data:${resp.headers['content-type']};base64,`;
+        resp.on('data', (data) => { body += data});
+        resp.on('end', () => callback(body));
+    }).on('error', (e) => {
+        console.error(`Got error: ${e.message}`);
+        callback('');
+    });
 }

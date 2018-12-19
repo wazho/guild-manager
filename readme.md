@@ -76,3 +76,9 @@ After you visiting http://localhost:3000/system/init, copy your `./token.json` t
 ```shell
 $ export GOOGLE_APIS_TOKEN="Text in token.json" # Single line better
 ```
+
+## Generate background sprite
+
+```shell
+$ ts-node ./src/utils/generate-sprite.ts
+```
