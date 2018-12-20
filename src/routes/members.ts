@@ -13,19 +13,21 @@ import {
 } from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
-import { statusAuth } from '../middlewares/status-auth';
+import { statusAuth, isStatusLegal } from '../middlewares/status-auth';
 
 const router = new Router();
 
-router.get('/', statusAuth, async (ctx, next) => {
+router.get('/', async (ctx, next) => {
+    const simple = !await isStatusLegal(ctx);
+
     const { members, lastUpdated } = await getMembersData();
 
     const statistics = {
         avgLevel: _.meanBy(members, (o) => o.level),
     };
 
-    const path = './src/views/users/root.pug';
-    const html = renderHtml(path, { members, lastUpdated });
+    const path = './src/views/users/roster.pug';
+    const html = renderHtml(path, { simple, members, lastUpdated });
     ctx.body = html;
 });
 

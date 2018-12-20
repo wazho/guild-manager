@@ -64,18 +64,15 @@ block content
                                     button.uk-button.uk-button-primary(onclick='UIkit.notification({message: "更新完畢 :)"})')
                                         | 更新
             if user === undefined
-                a.uk-button.uk-button-primary.uk-width-1-1(href='/login')
+                a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/login')
                     | 公會會員登入
             else
                 if user.status <= 2
                     a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/admin')
                         | 公會幹部管理頁面
-                if user.status <= 3
-                    a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/members')
-                        | 查閱會員列表
-                if user.status == 4
-                    button.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(disabled)
-                        | 查閱會員列表
+
+            a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/members')
+                | 查閱會員列表
 
     script.
         localStorage.clear();

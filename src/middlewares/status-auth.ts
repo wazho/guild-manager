@@ -24,3 +24,12 @@ export async function statusAuth(ctx: Router.IRouterContext, next: () => Promise
         ctx.redirect('/login');
     }
 }
+
+export async function isStatusLegal(ctx: Router.IRouterContext) {
+    const { user } = ctx.state;
+    const remoteUser = await findMember(user && user.lineID);
+    const legalLevels = [MemberStatus.公會長, MemberStatus.副會長, MemberStatus.會員];
+    const isLegal = !!(remoteUser && legalLevels.includes(remoteUser.status));
+
+    return isLegal;
+}
