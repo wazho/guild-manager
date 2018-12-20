@@ -12,7 +12,7 @@ const app = new Koa();
 app.keys = ['secret'];
 
 app
-    .use(serve('public'))
+    .use(serve('public', { maxage: 24 * 60 * 1000 }))
     .use(logger())
     // Body parser.
     .use(bodyParser())
