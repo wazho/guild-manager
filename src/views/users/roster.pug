@@ -67,10 +67,8 @@ block style
             height: 100%;
             background: url('/assets/class_bg/_all.png') no-repeat top left;
             background-size: cover;
-            overflow: hidden;
-        }
-        .profile-card .avatar-showcase .avatar-picture {
             background-position: 0 0;
+            overflow: hidden;
         }
         .profile-card .avatar-showcase .avatar-picture.英雄,
         .profile-card .avatar-showcase .avatar-picture.聖騎士,
@@ -188,6 +186,84 @@ block style
             margin-top: 5px;
             border: 2px solid rgba(175, 175, 175, .75);
         }
+        .profile-card .avatar-showcase .union {
+            position: absolute;
+            right: 0.2em;
+            bottom: 0.2em;
+            width: 60px;
+            height: 60px;
+            background: url('/assets/union_badges/_all.png') no-repeat top left;
+            background-size: cover;
+            background-position: 0 60px;
+            overflow: hidden;
+            -webkit-filter: drop-shadow(0px 0px 10px #000);
+                    filter: drop-shadow(0px 0px 10px #000);
+            transition: all 1s ease-in-out;
+        }
+        .profile-card .avatar-showcase .union:hover {
+            -webkit-filter: drop-shadow(0px 0px 5px #000);
+                    filter: drop-shadow(0px 0px 5px #000);
+        }
+        .profile-card .avatar-showcase .union.novice-union-1 {
+            background-position: 0 0px;
+        }
+        .profile-card .avatar-showcase .union.novice-union-2 {
+            background-position: 0 -60px;
+        }
+        .profile-card .avatar-showcase .union.novice-union-3 {
+            background-position: 0 -120px;
+        }
+        .profile-card .avatar-showcase .union.novice-union-4 {
+            background-position: 0 -180px;
+        }
+        .profile-card .avatar-showcase .union.novice-union-5 {
+            background-position: 0 -240px;
+        }
+        .profile-card .avatar-showcase .union.veteran-union-1 {
+            background-position: 0 -300px;
+        }
+        .profile-card .avatar-showcase .union.veteran-union-2 {
+            background-position: 0 -360px;
+        }
+        .profile-card .avatar-showcase .union.veteran-union-3 {
+            background-position: 0 -420px;
+        }
+        .profile-card .avatar-showcase .union.veteran-union-4 {
+            background-position: 0 -480px;
+        }
+        .profile-card .avatar-showcase .union.veteran-union-5 {
+            background-position: 0 -540px;
+        }
+        .profile-card .avatar-showcase .union.master-union-1 {
+            background-position: 0 -600px;
+        }
+        .profile-card .avatar-showcase .union.master-union-2 {
+            background-position: 0 -660px;
+        }
+        .profile-card .avatar-showcase .union.master-union-3 {
+            background-position: 0 -720px;
+        }
+        .profile-card .avatar-showcase .union.master-union-4 {
+            background-position: 0 -780px;
+        }
+        .profile-card .avatar-showcase .union.master-union-5 {
+            background-position: 0 -840px;
+        }
+        .profile-card .avatar-showcase .union.grand-master-union-1 {
+            background-position: 0 -900px;
+        }
+        .profile-card .avatar-showcase .union.grand-master-union-2 {
+            background-position: 0 -960px;
+        }
+        .profile-card .avatar-showcase .union.grand-master-union-3 {
+            background-position: 0 -1020px;
+        }
+        .profile-card .avatar-showcase .union.grand-master-union-4 {
+            background-position: 0 -1080px;
+        }
+        .profile-card .avatar-showcase .union.grand-master-union-5 {
+            background-position: 0 -1140px;
+        }
         .member-info {
             padding: .5em;
         }
@@ -291,6 +367,7 @@ block content
                                 else if member.status === 4
                                     | 離會會員
                         div.avatar-showcase
+                            //- Avatar.
                             div.avatar-picture(class=`${member.job}`)
                                 img.avatar.uk-border-rounded(
                                     ondragstart='return false;',
@@ -303,6 +380,8 @@ block content
                                         ondragstart='return false;',
                                         src=`/assets/class_follower/${member.job}.png`, onerror='this.style.display="none"'
                                     )
+
+                            //- Boss teams.
                             if member.groups.length
                                 div.groups
                                     each group in member.groups
@@ -311,6 +390,14 @@ block content
                                             uk-tooltip= `title: ${group[0]} - ${group[1]} 團; pos: right`,
                                             src= `/assets/bosses/${group[0]}.png`
                                         )
+
+                            //- Union
+                            div.union(
+                                class=`${member.unionRank}`
+                                ondragstart='return false;',
+                                uk-tooltip= `title: 戰地等級: ${member.unionLevel}; pos: top`
+                            )
+
                         div.member-info
                             if simple === true
                                 div

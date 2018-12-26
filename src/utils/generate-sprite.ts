@@ -28,4 +28,30 @@ nsg({
     spritePath: './public/assets/class_bg/_all.png',
 }, (err) => console.log(err));
 
+nsg({
+    src: [
+        './public/assets/union_badges/novice-union-1.png',
+        './public/assets/union_badges/novice-union-2.png',
+        './public/assets/union_badges/novice-union-3.png',
+        './public/assets/union_badges/novice-union-4.png',
+        './public/assets/union_badges/novice-union-5.png',
+        './public/assets/union_badges/veteran-union-1.png',
+        './public/assets/union_badges/veteran-union-2.png',
+        './public/assets/union_badges/veteran-union-3.png',
+        './public/assets/union_badges/veteran-union-4.png',
+        './public/assets/union_badges/veteran-union-5.png',
+        './public/assets/union_badges/master-union-1.png',
+        './public/assets/union_badges/master-union-2.png',
+        './public/assets/union_badges/master-union-3.png',
+        './public/assets/union_badges/master-union-4.png',
+        './public/assets/union_badges/master-union-5.png',
+        './public/assets/union_badges/grand-master-union-1.png',
+        './public/assets/union_badges/grand-master-union-2.png',
+        './public/assets/union_badges/grand-master-union-3.png',
+        './public/assets/union_badges/grand-master-union-4.png',
+        './public/assets/union_badges/grand-master-union-5.png',
+    ],
+    spritePath: './public/assets/union_badges/_all.png',
+}, (err) => console.log(err));
+
 console.log(`Please do tinyify on TinyPNG. (https://tinypng.com/)`);

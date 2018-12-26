@@ -28,6 +28,7 @@ interface IProfile {
     job?: string;
     level?: number;
     unionLevel?: number;
+    unionRank?: string;
     groups?: string | string[][];
     moodPhrase?: string;
     firstCreated?: string;
@@ -44,6 +45,56 @@ interface ISocialData {
     lastUpdated?: string;
     failCount?: number;
 }
+
+/**
+ * Calculate the union rank by union level.
+ * @param unionLevel
+ */
+const getUnionRank = (unionLevel?: number) => {
+    if (unionLevel === undefined) {
+        return undefined;
+    } else if (unionLevel <= 1000) {
+        return 'novice-union-1';
+    } else if (unionLevel <= 1500) {
+        return 'novice-union-2';
+    } else if (unionLevel <= 2000) {
+        return 'novice-union-3';
+    } else if (unionLevel <= 2500) {
+        return 'novice-union-4';
+    } else if (unionLevel <= 3000) {
+        return 'novice-union-5';
+    } else if (unionLevel <= 3500) {
+        return 'veteran-union-1';
+    } else if (unionLevel <= 4000) {
+        return 'veteran-union-2';
+    } else if (unionLevel <= 4500) {
+        return 'veteran-union-3';
+    } else if (unionLevel <= 5000) {
+        return 'veteran-union-4';
+    } else if (unionLevel <= 5500) {
+        return 'veteran-union-5';
+    } else if (unionLevel <= 6000) {
+        return 'master-union-1';
+    } else if (unionLevel <= 6500) {
+        return 'master-union-2';
+    } else if (unionLevel <= 7000) {
+        return 'master-union-3';
+    } else if (unionLevel <= 7500) {
+        return 'master-union-4';
+    } else if (unionLevel <= 8000) {
+        return 'master-union-5';
+    } else if (unionLevel <= 8500) {
+        return 'grand-master-union-1';
+    } else if (unionLevel <= 9000) {
+        return 'grand-master-union-2';
+    } else if (unionLevel <= 9500) {
+        return 'grand-master-union-3';
+    } else if (unionLevel <= 10000) {
+        return 'grand-master-union-4';
+    } else if (unionLevel === 10000) {
+        return 'grand-master-union-5';
+    }
+};
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -436,6 +487,7 @@ async function taskRefreshMembersData(this: any) {
     membersData = {
         members: (await _getMembers())
             .map((o, i) => ({ ...o, rowNum: i + 2 })) // 2 is a magic !
+            .map((o) => ({ ...o, unionRank: getUnionRank(o.unionLevel)}))
             .sort((a, b) => Math.random() - Math.random()) // shuffle.
             .sort((a, b) => a.status - b.status)
             .filter((o) => o.status <= MemberStatus.會員),
