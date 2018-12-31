@@ -10,6 +10,7 @@ import {
     getTeamsData,
     addMember,
     updateMoodPhrase,
+    updatePreferences,
 } from '../libs/google-apis';
 import { getCharData } from '../libs/maplestory-union-api';
 import { renderHtml } from '../libs/render-html';
@@ -19,6 +20,7 @@ const router = new Router();
 
 router.get('/', async (ctx, next) => {
     const simple = !await isStatusLegal(ctx);
+    const { user } = ctx.state;
 
     const { members, lastUpdated } = await getMembersData();
 
@@ -27,7 +29,7 @@ router.get('/', async (ctx, next) => {
     };
 
     const path = './src/views/users/roster.pug';
-    const html = renderHtml(path, { simple, members, lastUpdated });
+    const html = renderHtml(path, { simple, user, members, lastUpdated });
     ctx.body = html;
 });
 
@@ -148,6 +150,36 @@ router.post('/mood-phrase', statusAuth, async (ctx, next) => {
             const { moodPhrase } = body as any;
 
             await updateMoodPhrase(remoteUser.lineID, moodPhrase, (e: any) => {
+                e && console.warn(e);
+            });
+
+            ctx.status = 200;
+            ctx.message = 'succeeded';
+        } else {
+            throw 'ERR_UPDATE_MOOD_PHRASE';
+        }
+    } catch (error) {
+        ctx.status = 400;
+        ctx.message = 'fail to update mood phrase.';
+    }
+});
+
+router.post('/preferences', statusAuth, async (ctx, next) => {
+    try {
+        const { user } = ctx.state;
+        const remoteUser = await findMember(user && user.lineID);
+        const body = ctx.request.body;
+
+        if (remoteUser && body) {
+            // Decode inviteCode and code.
+            const { showUnionLevel, onLeave } = body as any;
+
+            const data = {
+                showUnionLevel: !!showUnionLevel,
+                onLeave: !!onLeave,
+            };
+
+            await updatePreferences(remoteUser.rowNum, data, (e: any) => {
                 e && console.warn(e);
             });
 

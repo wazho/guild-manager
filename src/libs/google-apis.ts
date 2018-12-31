@@ -17,7 +17,7 @@ export enum MemberStatus {
 }
 
 // Authorize a client with credentials, then call the Google Sheets API.
-interface IProfile {
+interface IBasicProfile {
     charName: string;
     displayName: string;
     status: MemberStatus;
@@ -28,12 +28,17 @@ interface IProfile {
     job?: string;
     level?: number;
     unionLevel?: number;
+}
+
+interface IProfile extends IBasicProfile {
+    rowNum: number;
     unionRank?: string;
-    groups?: string | string[][];
-    moodPhrase?: string;
-    firstCreated?: string;
-    lastUpdated?: string;
-    rowNum?: number;
+    groups: string | string[][];
+    moodPhrase: string;
+    firstCreated: string;
+    lastUpdated: string;
+    showUnionLevel: boolean;
+    onLeave: boolean;
 }
 
 interface ISocialData {
@@ -52,7 +57,7 @@ interface ISocialData {
  */
 const getUnionRank = (unionLevel?: number) => {
     if (unionLevel === undefined) {
-        return undefined;
+        return '';
     } else if (unionLevel <= 1000) {
         return 'novice-union-1';
     } else if (unionLevel <= 1500) {
@@ -93,6 +98,8 @@ const getUnionRank = (unionLevel?: number) => {
         return 'grand-master-union-4';
     } else if (unionLevel === 10000) {
         return 'grand-master-union-5';
+    } else {
+        return '';
     }
 };
 
@@ -168,11 +175,12 @@ async function _getMembers() {
     try {
         const res = await getValues({
             spreadsheetId: googleApis.spreadsheetId,
-            range: `${googleApis.memberSheetName}!A2:M`,
+            range: `${googleApis.memberSheetName}!A2:P`,
         });
 
         const rows: string[][] = res.data.values;
-        const members: IProfile[] = rows.map((row) => ({
+        const members: IProfile[] = rows.map((row, i) => ({
+            rowNum: i + 2, // 2 is a magic for freeze rows !
             charName: row[0],
             displayName: row[1],
             status: MemberStatus[row[2] as any] as any,
@@ -183,10 +191,13 @@ async function _getMembers() {
             job: row[7],
             level: parseInt(row[8]),
             unionLevel: parseInt(row[9]),
+            unionRank: getUnionRank(parseInt(row[9])),
             groups: row[10].split(',').filter(Boolean).map((o) => o.split('-')),
             moodPhrase: row[11],
             firstCreated: row[12],
-            lastUpdated: row[123],
+            lastUpdated: row[13],
+            showUnionLevel: row[14] === 'yes',
+            onLeave: row[15] === 'yes',
         }));
 
         return members;
@@ -331,7 +342,7 @@ async function _updateLineToken(rowNum: number, encodedToken: string, callback: 
                             undefined,                   // Picture URL.
                             encodedToken,                // Encoded token.
                             undefined,                   // First create time.
-                            (new Date).toISOString(), // Last update time.
+                            (new Date).toISOString(),    // Last update time.
                             0,                           // Count of failure.
                         ]],
                     },
@@ -385,7 +396,7 @@ async function _updateLineProfile(rowNum: number, social: ISocialData, callback:
                             social.pictureURL,
                             undefined,                   // Encoded token.
                             undefined,                   // First create time.
-                            (new Date).toISOString(), // Last update time.
+                            (new Date).toISOString(),    // Last update time.
                             social.failCount,            // Count of failure.
                         ]],
                     },
@@ -408,7 +419,7 @@ async function _updateCharData(rowNum: number, profile: Partial<IProfile>, callb
     const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
 
     try {
-        // Update sheet 'members' and 'line_profiles'.
+        // Update sheet 'members'.
         const res = await batchUpdate({
             auth,
             spreadsheetId: googleApis.spreadsheetId,
@@ -460,12 +471,54 @@ async function _updateMoodPhrase(lineID: string, moodPhrase: string, callback: a
                     data: [
                         {
                             range: `${googleApis.memberSheetName}!L${found.rowNum}`,
-                            values: [[ moodPhrase ]],
+                            values: [[moodPhrase]],
                         }
                     ],
                 },
             });
         }
+
+        return callback(null);
+    } catch (err) {
+        return callback('ERR_UPDATE_VALUES', err.errors);
+    }
+}
+
+async function _updatePreferences(rowNum: number, profile: Partial<IProfile>, callback: any, auth: any) {
+    const sheets = google.sheets({
+        version: 'v4',
+        auth,
+    });
+
+    const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
+
+    const showUnionLevel = profile.showUnionLevel ? 'yes' : 'no';
+    const onLeave = profile.onLeave ? 'yes' : 'no';
+
+    try {
+        // Update sheet 'members'.
+        const res = await batchUpdate({
+            auth,
+            spreadsheetId: googleApis.spreadsheetId,
+            resource: {
+                valueInputOption: 'RAW',
+                data: [
+                    {
+                        range: `${googleApis.memberSheetName}!O${rowNum}:P`,
+                        values: [[
+                            showUnionLevel,    // Show my union level to others.
+                            onLeave,           // On leave for a while.
+                        ]],
+                    },
+                    {
+                        range: `${googleApis.memberSheetName}!N${rowNum}`,
+                        values: [[
+                            (new Date).toISOString(), // Last update time.
+                        ]],
+                    },
+                ],
+            },
+        });
 
         return callback(null);
     } catch (err) {
@@ -486,8 +539,6 @@ let membersData: { members: IProfile[], lastUpdated: string };
 async function taskRefreshMembersData(this: any) {
     membersData = {
         members: (await _getMembers())
-            .map((o, i) => ({ ...o, rowNum: i + 2 })) // 2 is a magic !
-            .map((o) => ({ ...o, unionRank: getUnionRank(o.unionLevel)}))
             .sort((a, b) => Math.random() - Math.random()) // shuffle.
             .sort((a, b) => a.status - b.status)
             .filter((o) => o.status <= MemberStatus.會員),
@@ -517,7 +568,7 @@ export const generateToken = async (code: string) =>
     authorize(credentials, () => null)
         .catch((e) => _generateToken(code));
 
-export const addMember = async (profile: IProfile, social: ISocialData, errorHandler: any) =>
+export const addMember = async (profile: IBasicProfile, social: ISocialData, errorHandler: any) =>
     await authorize(credentials, _addMember.bind(null, profile, social, errorHandler))
         .catch((e) => console.error(e));
 
@@ -535,6 +586,10 @@ export const updateCharData = async (rowNum: number, profile: Partial<IProfile>,
 
 export const updateMoodPhrase = async (lineID: string, moodPhrase: string, errorHandler: any) =>
     await authorize(credentials, _updateMoodPhrase.bind(null, lineID, moodPhrase, errorHandler))
+        .catch((e) => console.error(e));
+
+export const updatePreferences = async (rowNum: number, profile: Partial<IProfile>, errorHandler: any) =>
+    await authorize(credentials, _updatePreferences.bind(null, rowNum, profile, errorHandler))
         .catch((e) => console.error(e));
 
 /**

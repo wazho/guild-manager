@@ -391,12 +391,13 @@ block content
                                             src= `/assets/bosses/${group[0]}.png`
                                         )
 
-                            //- Union
-                            div.union(
-                                class=`${member.unionRank}`
-                                ondragstart='return false;',
-                                uk-tooltip= `title: 戰地等級: ${member.unionLevel}; pos: top`
-                            )
+                            //- Union (Manager's status is 1 or 2).
+                            if member.showUnionLevel || (user && user.status <= 2)
+                                div.union(
+                                    class=`${member.unionRank}`
+                                    ondragstart='return false;',
+                                    uk-tooltip= `title: 戰地等級: ${member.unionLevel}; pos: top`
+                                )
 
                         div.member-info
                             if simple === true

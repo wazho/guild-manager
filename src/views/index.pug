@@ -33,26 +33,34 @@ block content
                         | 新楓之谷 淫小築
                     ul.uk-list
                         li 1. 與公會幹部索取邀請連結
-                        li 2. 透過 LINE 登入
-                        li 3. 詳閱網站說明
+                        li 2. 詳閱網站說明
+                        li 3. 透過 LINE 登入
                         li 4. 完成會籍登錄
                 else
                     article.uk-comment
                         a.logout.uk-button.uk-button-danger.uk-margin-small-bottom(href='/logout')
                             | 登出
+
                         header.uk-comment-header.uk-grid-medium.uk-flex-middle(uk-grid)
                             div.character.uk-width-auto
                                 img.avatar.uk-comment-avatar(
                                     ondragstart='return false;',
                                     src= user.avatarURL, onerror='this.src="/assets/images/default-avatar.png"'
                                 )
+
                             div.uk-width-expand
                                 h4.uk-comment-title.uk-margin-remove
+                                    if user && user.onLeave
+                                        span.uk-label.uk-label-warning
+                                            | 請假中
+                                        | &nbsp;
                                     | #{user.charName}
                                 ul.uk-comment-meta.uk-subnav.uk-subnav-divider.uk-margin-remove-top
-                                    li 最近心情小語
+                                    li 戰地分數: #{user.unionLevel}
+
                         div.uk-comment-body
                             iframe#dummyFrame(name='dummyFrame', width='0', height='0', border='0')
+
                             form.uk-grid-small(action='/members/mood-phrase', method='post', target='dummyFrame', uk-grid)
                                 div(class='uk-width-1-3@s')
                                     input.uk-input(
@@ -60,9 +68,11 @@ block content
                                         placeholder='說些什麼，或是留空',
                                         uk-tooltip='建議控制在全形 12 字或半形 24 字'
                                         value= user.moodPhrase, autocomplete='off')
+
                                 div(class='uk-width-1-3@s')
                                     button.uk-button.uk-button-primary(onclick='UIkit.notification({message: "更新完畢 :)"})')
                                         | 更新
+
             if user === undefined
                 a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/login')
                     | 公會會員登入
@@ -71,8 +81,49 @@ block content
                     a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/admin')
                         | 公會幹部管理頁面
 
+                if user.status <= 3
+                    button.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(
+                        uk-toggle='target: #preferences'
+                        type='button'
+                    ) 調整顯示資訊
+
             a.uk-button.uk-button-primary.uk-width-1-1.uk-margin-small-bottom(href='/members')
                 | 查閱會員列表
+
+            //- Preferences modal.
+            if user
+                div#preferences(uk-modal)
+                    div.uk-modal-dialog.uk-margin-auto-vertical.uk-modal-body
+                        div.uk-modal-close-outside(type='button', uk-close)
+
+                        form(action='/members/preferences', method='post', target='dummyFrame', uk-grid)
+                            fieldset.uk-fieldset(style='width: 100%;')
+                                legend.uk-legend
+                                    | 顯示設定
+
+                                div.uk-margin
+                                    label
+                                        input.uk-checkbox(
+                                            name='showUnionLevel', type='checkbox',
+                                            checked= user.showUnionLevel)
+                                        | &nbsp;對他人顯示自身戰地分數
+
+                                div.uk-margin
+                                    label.uk-margin-top
+                                        input.uk-checkbox(
+                                            name='onLeave', type='checkbox',
+                                            checked= user.onLeave)
+                                        | &nbsp;標記為請假中 (BETA)
+
+                                hr.uk-divider-icon
+
+                                div(style='width: 100%;')
+                                    button.uk-modal-close.uk-button.uk-button-default
+                                        | 關閉
+                                    | &nbsp;
+                                    input.uk-button.uk-button-primary.uk-align-right.uk-margin-remove-bottom(
+                                        type='submit', value='更新'
+                                        onclick='UIkit.notification({message: "更新完畢 :)"})')
 
     script.
         localStorage.clear();
