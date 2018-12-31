@@ -250,6 +250,8 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         undefined, // Empty mood phrase.
                         (new Date).toISOString(),
                         (new Date).toISOString(),
+                        'yes', // showUnionLevel
+                        'no',  // onLeave
                     ]
                 ]
             },
