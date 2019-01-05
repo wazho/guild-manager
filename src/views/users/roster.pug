@@ -181,6 +181,7 @@ block style
             left: 0;
             bottom: 0;
             background: rgba(0, 0, 0, .75);
+            z-index: 5;
         }
         .profile-card .avatar-showcase .groups img.group-icon {
             margin-top: 5px;
@@ -198,6 +199,7 @@ block style
             overflow: hidden;
             -webkit-filter: drop-shadow(0px 0px 10px #000);
                     filter: drop-shadow(0px 0px 10px #000);
+            z-index: 5;
             transition: all 1s ease-in-out;
         }
         .profile-card .avatar-showcase .union:hover {
@@ -263,6 +265,38 @@ block style
         }
         .profile-card .avatar-showcase .union.grand-master-union-5 {
             background-position: 0 -1140px;
+        }
+        .profile-card .avatar-showcase .on-leave {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-items: center;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 10;
+            transition: all 0.25s ease-in-out;
+        }
+        .profile-card:hover .avatar-showcase .on-leave {
+            background: rgba(0, 0, 0, 0.25);
+            z-index: 3;
+        }
+        .profile-card .avatar-showcase .on-leave .title {
+            width: 100%;
+            align-self: flex-end;
+            color: #CCC;
+            font-size: 2em;
+        }
+        .profile-card .avatar-showcase .on-leave .title.center {
+            align-self: center;
+        }
+        .profile-card .avatar-showcase .on-leave .reason {
+            width: 100%;
+            align-self: flex-start;
+            color: #AAA;
+            font-size: 1.25em;
         }
         .member-info {
             padding: .5em;
@@ -398,6 +432,18 @@ block content
                                     ondragstart='return false;',
                                     uk-tooltip= `title: 戰地等級: ${member.unionLevel}; pos: top`
                                 )
+
+                            if member.onLeave
+                                div.on-leave
+                                    //- Reason of on leave (Manager's status is 1 or 2).
+                                    if user && user.status <= 2
+                                        div.title
+                                            | 請假中
+                                        div.reason
+                                            | #{member.onLeave}
+                                    else
+                                        div.title.center
+                                            | 請假中
 
                         div.member-info
                             if simple === true

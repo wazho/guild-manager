@@ -23,6 +23,9 @@ block style
             top: 10px;
             right: 10px;
         }
+        .hidden {
+            display: none;
+        }
 
 block content
     div.uk-section.uk-position-center-left.uk-position-center-right
@@ -112,8 +115,17 @@ block content
                                     label.uk-margin-top
                                         input.uk-checkbox(
                                             name='onLeave', type='checkbox',
-                                            checked= user.onLeave)
-                                        | &nbsp;標記為請假中 (BETA)
+                                            checked= user.onLeave,
+                                            oninput= 'toggleOnLeaveInput()')
+                                        | &nbsp;標記為請假中
+
+                                div.uk-margin
+                                    input.uk-input(
+                                        class= (user.onLeave ? '' : 'hidden'),
+                                        name='onLeaveReason', type='text',
+                                        placeholder='請假事由，只有管理群可見',
+                                        uk-tooltip='建議控制在全形 12 字或半形 24 字'
+                                        value= user.onLeave, autocomplete='off')
 
                                 hr.uk-divider-icon
 
@@ -126,4 +138,14 @@ block content
                                         onclick='UIkit.notification({message: "更新完畢 :)"})')
 
     script.
+        //- Clear the invite token.
         localStorage.clear();
+
+        function toggleOnLeaveInput() {
+            const onLeaveInput = document.querySelector('input[name="onLeave"]');
+            const onLeaveReasonInput = document.querySelector('input[name="onLeaveReason"]');
+
+            onLeaveInput.checked
+                ? onLeaveReasonInput.classList.remove('hidden')
+                : onLeaveReasonInput.classList.add('hidden');
+        }

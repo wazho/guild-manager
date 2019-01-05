@@ -38,7 +38,7 @@ interface IProfile extends IBasicProfile {
     firstCreated: string;
     lastUpdated: string;
     showUnionLevel: boolean;
-    onLeave: boolean;
+    onLeave: string;
 }
 
 interface ISocialData {
@@ -197,7 +197,7 @@ async function _getMembers() {
             firstCreated: row[12],
             lastUpdated: row[13],
             showUnionLevel: row[14] === 'yes',
-            onLeave: row[15] === 'yes',
+            onLeave: row[15],
         }));
 
         return members;
@@ -250,8 +250,8 @@ async function _addMember(profile: IProfile, social: ISocialData, callback: any,
                         undefined, // Empty mood phrase.
                         (new Date).toISOString(),
                         (new Date).toISOString(),
-                        'yes', // showUnionLevel
-                        'no',  // onLeave
+                        'yes', // showUnionLevel: yes / no.
+                        '',    // onLeave: Empty value means nothing.
                     ]
                 ]
             },
@@ -495,7 +495,7 @@ async function _updatePreferences(rowNum: number, profile: Partial<IProfile>, ca
     const batchUpdate = promisify(sheets.spreadsheets.values.batchUpdate);
 
     const showUnionLevel = profile.showUnionLevel ? 'yes' : 'no';
-    const onLeave = profile.onLeave ? 'yes' : 'no';
+    const onLeave = profile.onLeave;
 
     try {
         // Update sheet 'members'.

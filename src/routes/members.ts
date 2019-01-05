@@ -172,11 +172,11 @@ router.post('/preferences', statusAuth, async (ctx, next) => {
 
         if (remoteUser && body) {
             // Decode inviteCode and code.
-            const { showUnionLevel, onLeave } = body as any;
+            const { showUnionLevel, onLeave, onLeaveReason } = body as any;
 
             const data = {
                 showUnionLevel: !!showUnionLevel,
-                onLeave: !!onLeave,
+                onLeave: onLeave ? onLeaveReason : '',
             };
 
             await updatePreferences(remoteUser.rowNum, data, (e: any) => {
