@@ -1,4 +1,5 @@
 import * as Koa from 'koa';
+import * as compress from 'koa-compress';
 import * as serve from 'koa-static';
 import * as logger from 'koa-logger';
 import * as bodyParser from 'koa-bodyparser';
@@ -12,6 +13,7 @@ const app = new Koa();
 app.keys = ['secret'];
 
 app
+    .use(compress())
     .use(serve('public', { maxage: 24 * 60 * 1000 }))
     .use(logger())
     // Body parser.
