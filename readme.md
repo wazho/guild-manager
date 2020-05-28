@@ -1,4 +1,4 @@
-This is a guide management system for MMORPG MapleStory (TMS).
+This is a guild management system for MMORPG MapleStory (TMS).
 
 ## Member Management
 
@@ -6,14 +6,14 @@ Game avatar and its union info integrate with LINE profile.
 
 * Avatar and union level is crawled from official data.
 * LINE profile is based on user registration on this system.
-* **Guide member** customizes their moods by text.
+* **Guild member** customizes their moods by text.
 
 ![](./docs/images/member-list.png)
 
 
 ## Team Management
 
-**Guide manager** can manage party members for each BOSS teams.
+**Guild manager** can manage party members for each BOSS teams.
 
 * Easy drag and drop interation.
 * Real-time update to member list and team list.
@@ -23,9 +23,9 @@ Game avatar and its union info integrate with LINE profile.
 
 ## Leave Management
 
-**Guide member** can submit their reason when they want to take a leave.
+**Guild member** can submit their reason when they want to take a leave.
 
-* Only show the reason to **guide member**
+* Only show the reason to **guild member**
 
 ![](./docs/images/leave-flow.png)
 
